@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{83c1f955-555a-431b-8a71-8f073ded7b50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{f26d7e9b-36f0-4269-bf35-6e30f9f2f014}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\AstralLayer\Include\AstralDebug.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\AstralInfo.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\AstralLayer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\AstralLayerFactory.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\AstralRendererInterface.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\AstralSupport.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX11.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX11Factory.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX12.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX12Factory.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralRHI.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\AstralLayer\Src\AstrakDirectX12.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\AstralDebug.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\AstralDirectX.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\AstralDirectX12Factory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\AstralInfo.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\AstralLayerFactory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\AstralSupport.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DirectX11Factory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11CommandList.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11CommandQueue.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11DepthStencilView.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11Device.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11Fence.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11PipeLine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11RenderTargetView.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11Resource.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11RTVResource.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11SwapChain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX11Texture2D.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12CommandList.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12CommandQueue.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12ConstantBuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12DepthStencilView.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12Device.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12Fence.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12IndexBuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12PipeLine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12RenderTargetView.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12Resource.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12RTVResource.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12SwapChain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12Texture2D.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AstralLayer\Src\DX12VertexBuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{c34d5152-a8a2-4725-8876-f0e6bd7c8d57}</ProjectGuid>
+    <RootNamespace>AstralLayerLibrary</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\..\AstralLayer\lib\Debug\</OutDir>
+    <IntDir>..\AstralLayer\lib\Debug\</IntDir>
+    <TargetName>atld</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\..\AstralLayer\lib\Release\</OutDir>
+    <IntDir>..\AstralLayer\lib\Release\</IntDir>
+    <TargetName>atl</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\..\AstralLayer\lib\Debug\</OutDir>
+    <IntDir>..\AstralLayer\lib\Debug\</IntDir>
+    <TargetName>atld</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\..\AstralLayer\lib\Release\</OutDir>
+    <IntDir>..\AstralLayer\lib\Release\</IntDir>
+    <TargetName>atl</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\AstralLayer\Include\AstralDebug.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\AstralInfo.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\AstralLayer.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\AstralLayerFactory.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\AstralRendererInterface.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\AstralSupport.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX11.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX11Factory.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX12.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralDirectX12Factory.h" />
+    <ClInclude Include="..\..\AstralLayer\Include\ATL\AstralRHI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\AstralLayer\Src\AstrakDirectX12.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\AstralDebug.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\AstralDirectX.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\AstralDirectX12Factory.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\AstralInfo.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\AstralLayerFactory.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\AstralSupport.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DirectX11Factory.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11CommandList.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11CommandQueue.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11DepthStencilView.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11Device.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11Fence.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11PipeLine.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11RenderTargetView.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11Resource.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11RTVResource.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11SwapChain.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX11Texture2D.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12CommandList.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12CommandQueue.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12ConstantBuffer.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12DepthStencilView.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12Device.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12Fence.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12IndexBuffer.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12PipeLine.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12RenderTargetView.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12Resource.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12RTVResource.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12SwapChain.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12Texture2D.cpp" />
+    <ClCompile Include="..\..\AstralLayer\Src\DX12VertexBuffer.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
