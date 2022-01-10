@@ -16,6 +16,15 @@
     <Filter Include="Shader%28HLSL%29">
       <UniqueIdentifier>{2712b6bd-2639-4333-9040-1d8fcd29b3ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AstralLayerImGui">
+      <UniqueIdentifier>{373e69d7-46dc-4709-8f7d-87f063790ea3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AstralLayerImGui\imgui">
+      <UniqueIdentifier>{ef1df7a3-c518-40f3-831a-336418201a2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AstralLayerImGui\AstralImGui">
+      <UniqueIdentifier>{f06e6ba7-09e1-4b05-91c2-4a3838523932}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AstralLayer\Include\AstralDebug.h">
@@ -58,6 +67,30 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Math\SimpleMath.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AstralLayerImGui\AstralImGui\AstralImGui.h">
+      <Filter>AstralLayerImGui\AstralImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AstralLayerImGui\AstralLayer_ImGUI.h">
+      <Filter>AstralLayerImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imconfig.h">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui.h">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui_internal.h">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui_impl_dx11.h">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui_impl_dx12.h">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui_impl_win32.h">
+      <Filter>AstralLayerImGui\imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +200,39 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Math\SimpleMath.cpp">
       <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\AstralImGui\AstralImGui_DirectX11.cpp">
+      <Filter>AstralLayerImGui\AstralImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\AstralImGui\AstralImGui_DirectX12.cpp">
+      <Filter>AstralLayerImGui\AstralImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\AstralLayer_ImGUI.cpp">
+      <Filter>AstralLayerImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui.cpp">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_demo.cpp">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_draw.cpp">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_tables.cpp">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_widgets.cpp">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_impl_dx11.cpp">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_impl_dx12.cpp">
+      <Filter>AstralLayerImGui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_impl_win32.cpp">
+      <Filter>AstralLayerImGui\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

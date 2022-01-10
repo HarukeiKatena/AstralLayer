@@ -88,6 +88,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -102,6 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -116,6 +120,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -130,6 +136,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,6 +147,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\AstralLayerImGui\AstralImGui\AstralImGui.h" />
+    <ClInclude Include="..\AstralLayerImGui\AstralLayer_ImGUI.h" />
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imconfig.h" />
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui.h" />
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui_impl_dx11.h" />
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui_impl_dx12.h" />
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui_impl_win32.h" />
+    <ClInclude Include="..\AstralLayerImGui\ImGUI\imgui_internal.h" />
     <ClInclude Include="..\AstralLayer\Include\AstralDebug.h" />
     <ClInclude Include="..\AstralLayer\Include\AstralInfo.h" />
     <ClInclude Include="..\AstralLayer\Include\AstralLayer.h" />
@@ -156,6 +172,17 @@
     <ClInclude Include="Renderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\AstralLayerImGui\AstralImGui\AstralImGui_DirectX11.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\AstralImGui\AstralImGui_DirectX12.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\AstralLayer_ImGUI.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_demo.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_draw.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_impl_dx12.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_tables.cpp" />
+    <ClCompile Include="..\AstralLayerImGui\ImGUI\imgui_widgets.cpp" />
     <ClCompile Include="..\AstralLayer\Src\AstrakDirectX12.cpp" />
     <ClCompile Include="..\AstralLayer\Src\AstralDebug.cpp" />
     <ClCompile Include="..\AstralLayer\Src\AstralDirectX.cpp" />

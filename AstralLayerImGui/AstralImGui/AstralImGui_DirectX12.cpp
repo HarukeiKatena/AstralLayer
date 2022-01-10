@@ -31,7 +31,7 @@ bool AstralImGui::DX12ImGui::Create(
 	//DX12‰ŠúÝ’è
 	if(ImGui_ImplDX12_Init(
 		device,
-		1,
+		2,
 		DXGI_FORMAT_R8G8B8A8_UNORM,
 		m_prtvHeap,
 		m_prtvHeap->GetCPUDescriptorHandleForHeapStart(),

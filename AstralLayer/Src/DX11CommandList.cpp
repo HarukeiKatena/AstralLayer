@@ -91,6 +91,9 @@ bool AstralLayerDirectX11::DX11CommandList::Reset(
 		m_pCommandList = nullptr;
 	}
 
+	if (pPipeLine == nullptr)
+		return true;
+
 	//パイプラインを受け取る
 	DX11PipeLineState* pipeline = nullptr;
 	reinterpret_cast<AstralRHI::RHIPipeLine*>(pPipeLine)->

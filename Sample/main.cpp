@@ -15,6 +15,8 @@
 #include<chrono>
 #include<ctime>
 
+#include"../AstralLayerImGui/AstralLayer_ImGUI.h"
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 static HWND g_hWnd;
@@ -110,6 +112,9 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	if (AstralImGui::ImGuiWndProcHandler(hWnd, uMsg, wParam, lParam))
+		return true;
+
 	switch (uMsg)
 	{
 	case WM_DESTROY:

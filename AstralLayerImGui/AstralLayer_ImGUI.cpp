@@ -12,22 +12,22 @@ static AstralImGui::ATLIImGui* g_pAstralImGui = nullptr;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-bool ImGuiWndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+bool AstralImGui::ImGuiWndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	return ImGui_ImplWin32_WndProcHandler(hWnd,msg,wParam,lParam);
 }
 
-bool ImGUIInit(
+bool AstralImGui::ImGuiInit(
 	HWND hWnd, 
 	AstralLayer::ATLIDevice* pDevice)
 {
 	//Context作成
-	IMGUI_CHECKVERSION();
+	//IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
 	//初期色設定
 	ImGui::StyleColorsDark();
@@ -59,7 +59,7 @@ bool ImGUIInit(
 	return true;
 }
 
-void ImGuiBegin()
+void AstralImGui::ImGuiBegin()
 {
 	//指定したグラフィックインターフェースでフレーム作成
 	g_pAstralImGui->Begin();
@@ -73,25 +73,26 @@ void ImGuiBegin()
 	
 }
 
-AstralLayer::ATLICommandList* ImGuiEnd(
-	AstralLayer::ATLIFence* pFence,
-	AstralLayer::ATLIRenderTargetView* pRenderTargetView)
+AstralLayer::ATLICommandList* AstralImGui::ImGuiRenderer(AstralLayer::ATLIFence* pFence, AstralLayer::ATLIRenderTargetView* pRenderTargetView)
 {
 	//描画
 	ImGui::Render();
 
+	//指定された描画ライブラリの描画終了
+	return g_pAstralImGui->End(pFence, pRenderTargetView);
+}
+
+void AstralImGui::ImGuiEnd()
+{
 	//ビューポート
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 	}
-
-	//指定された描画ライブラリの描画終了
-	return g_pAstralImGui->End(pFence, pRenderTargetView);
 }
 
-void ImGuiRelease()
+void AstralImGui::ImGuiRelease()
 {
 	delete g_pAstralImGui;
 
@@ -107,7 +108,7 @@ static bool show_demo_window = true;
 static bool show_another_window = false;
 static float clear_color[4] = { 0.45f, 0.55f, 0.60f, 1.00f };
 
-void ImGuiDemo()
+void AstralImGui::ImGuiDemo()
 {
 	// 公式デモ表示
 	if (show_demo_window)

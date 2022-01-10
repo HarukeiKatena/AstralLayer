@@ -16,8 +16,8 @@ DXGI_SAMPLE_DESC AstralLayerDirectX11::GetMSAA(
 	ID3D11Device* pDevice, 
 	unsigned int Count)
 {
-	DXGI_SAMPLE_DESC msaa{};
-	for (unsigned int i = 0; i < Count; i++)
+	DXGI_SAMPLE_DESC msaa{ 1,0 };
+	for (unsigned int i = 0; i <= Count; i++)
 	{
 		unsigned int Quality = 0;
 		HRESULT hr = pDevice->CheckMultisampleQualityLevels(DXGI_FORMAT_D24_UNORM_S8_UINT, i, &Quality);

@@ -1,14 +1,16 @@
 #include "Renderer.h"
 
-
+//AstralLayerを使える
 #include"../AstralLayer/Include/AstralLayerFactory.h"
 #include"../AstralLayer/Include/AstralSupport.h"
+
+#include"../AstralLayerImGui/AstralLayer_ImGUI.h"
 
 void Renderer::Init(HWND hwnd)
 {
 	//ファクトリー
 	AstralLayerFactory::ATLIFactory* factory = 
-		AstralLayerFactory::CreateAstralFactory(ATL_GRAPHIC_INTERFACE::DirectX12);//ここの引数で切り替える
+		AstralLayerFactory::CreateAstralFactory(ATL_GRAPHIC_INTERFACE::DirectX11);//ここの引数で切り替える
 
 	//デバイス
 	m_pDevice = factory->CreateDevice();
@@ -20,10 +22,14 @@ void Renderer::Init(HWND hwnd)
 	//コマンドキュー
 	m_pCommandQueue = m_pDevice->CreateCommandQueue();
 
+	//画面サイズ取得
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+
 	//スワップチェイン
 	ATL_SWAPCHAIN_DESC swapdesc{};
-	swapdesc.Width = SCREEN_WIDHT;
-	swapdesc.Height = SCREEN_HEIGHT;
+	swapdesc.Width = (rect.right - rect.left);
+	swapdesc.Height = (rect.bottom - rect.top);
 	swapdesc.hWnd = hwnd;
 	swapdesc.Sample.Count = 1;
 	swapdesc.Sample.Quality = 0;
@@ -31,9 +37,10 @@ void Renderer::Init(HWND hwnd)
 	m_pSwapChain = m_pDevice->CreateSwapChain(swapdesc, m_pCommandQueue);
 
 	//レンダーターゲットビュー
-	m_pRenderTargetView = m_pDevice->CreateRenderTargetView(m_pSwapChain, SCREEN_WIDHT, SCREEN_HEIGHT);
+	m_pRenderTargetView = m_pDevice->CreateRenderTargetView(m_pSwapChain, swapdesc.Width, swapdesc.Height);
 
-	//ATLIRenderTargetView* test = m_pDevice->CreateRenderTargetView(nullptr, SCREEN_WIDHT, SCREEN_HEIGHT);
+	//第一引数ををnullにした場合SwapChainからバッファを受け取らず自動的に専用のバッファを生成する
+	//ATLIRenderTargetView* rtv = m_pDevice->CreateRenderTargetView(nullptr, SCREEN_WIDHT, SCREEN_HEIGHT);
 
 	//コマンドリスト
 	m_pCommandList = m_pDevice->CreateCommandList();
@@ -45,8 +52,8 @@ void Renderer::Init(HWND hwnd)
 	//デプスステンシルビュー
 	{
 		ATL_DEPTH_STENCIL_VIEW_DESC desc;
-		desc.Width = SCREEN_WIDHT;
-		desc.Height = SCREEN_HEIGHT;
+		desc.Width = swapdesc.Width;
+		desc.Height = swapdesc.Height;
 		desc.SampleDesc = swapdesc.Sample;
 		desc.Dimension = ATL_DSV_DIMENSION::TEXTURE2DMS;
 		m_pDepthStencilView = m_pDevice->CreateDepthStencilView(desc);
@@ -248,6 +255,10 @@ void Renderer::Init(HWND hwnd)
 
 	m_Viewport = ATLSCreateViewport(SCREEN_WIDHT, SCREEN_HEIGHT);
 	m_Rect = ATLSCreateRect(SCREEN_WIDHT, SCREEN_HEIGHT);
+
+	// ImGui
+	// ウィンドウプロシージャにAstralImGui::ImGuiWndProcHandler()を記入するのを忘れずに
+	AstralImGui::ImGuiInit(hwnd, m_pDevice);
 }
 
 void Renderer::Update(void)
@@ -347,9 +358,19 @@ void Renderer::Draw(void)
 		m_pCommandList->Close();
 	}
 
+	// ImGUi描画
+	// ImGuiEndでコマンドを取得し任意のタイミングでATLICommandQueue::ExecuteCommandLists()を使いコマンドを実行する
+	// ImGuiEndで取得したコマンドリストは解放してはならない
+	AstralImGui::ImGuiBegin();
+	ImGui::ShowDemoWindow();	// ImGuiの機能をそのまま使える
+	ATLICommandList* imgui = AstralImGui::ImGuiRenderer(m_pFence, m_pRenderTargetView);
+
 	//コマンド実行
-	ATLICommandList* command[2] = { m_pClearCommandList, m_pCommandList};
-	m_pCommandQueue->ExecuteCommandLists(2, command);
+	ATLICommandList* command[3] = { m_pClearCommandList, m_pCommandList, imgui};
+	m_pCommandQueue->ExecuteCommandLists(3, command);
+
+	//ImGuiの描画終了処理
+	AstralImGui::ImGuiEnd();
 
 	//描画
 	m_pSwapChain->Present(1);
@@ -362,6 +383,8 @@ void Renderer::Uninit(void)
 {
 	//描画が終わるまで待つ
 	m_pFence->WaitDrawDone(m_pCommandQueue, m_pSwapChain);
+
+	AstralImGui::ImGuiRelease();
 
 	m_pTexture->Release();
 	m_pWorldBuffer->Release();

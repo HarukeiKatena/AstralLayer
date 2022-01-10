@@ -135,7 +135,7 @@ namespace AstralLayerDirectX11
 		)override;
 
 		/****************************************************************//**
-		 * @see AstralLayer::ATLIDevice::Release()
+		 * @see AstralLayer::ATLIDevice::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -309,7 +309,7 @@ namespace AstralLayerDirectX11
 		bool Close()override;
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLICommandList::Release()
+		 * @see Astrallayer::ATLICommandList::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -347,7 +347,7 @@ namespace AstralLayerDirectX11
 		)override;
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLICommandQueue::Release()
+		 * @see Astrallayer::ATLICommandQueue::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -394,7 +394,7 @@ namespace AstralLayerDirectX11
 		)override;
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLISwapChain::Release()
+		 * @see Astrallayer::ATLISwapChain::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -445,7 +445,7 @@ namespace AstralLayerDirectX11
 		)override;
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLIRenderTargetView::Release()
+		 * @see Astrallayer::ATLIRenderTargetView::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -493,7 +493,7 @@ namespace AstralLayerDirectX11
 		virtual ~DX11DepthStencilView();
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLIDepthStencilView::Release()
+		 * @see Astrallayer::ATLIDepthStencilView::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -572,7 +572,7 @@ namespace AstralLayerDirectX11
 		)override;
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLIResource::Release()
+		 * @see Astrallayer::ATLIResource::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -634,7 +634,7 @@ namespace AstralLayerDirectX11
 		)override;
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLIResource::Release()
+		 * @see Astrallayer::ATLIResource::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -694,7 +694,7 @@ namespace AstralLayerDirectX11
 		)override;
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLIResource::Release()
+		 * @see Astrallayer::ATLIResource::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -742,7 +742,7 @@ namespace AstralLayerDirectX11
 		)override;
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLIFence::Release()
+		 * @see Astrallayer::ATLIFence::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 
@@ -808,7 +808,7 @@ namespace AstralLayerDirectX11
 		virtual ~DX11PipeLine();
 
 		/****************************************************************//**
-		 * @see Astrallayer::ATLIPipeLine::Release()
+		 * @see Astrallayer::ATLIPipeLine::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 

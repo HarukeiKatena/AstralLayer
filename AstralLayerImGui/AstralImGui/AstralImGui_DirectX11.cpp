@@ -39,7 +39,8 @@ AstralLayer::ATLICommandList* AstralImGui::DX11ImGui::End(
 	AstralLayer::ATLIFence* pFence,
 	AstralLayer::ATLIRenderTargetView* pRenderTargetView)
 {
-	pFence;
+	//コマンドリセット
+	m_pCommandList->Reset(nullptr, pFence);
 
 	//レンダーターゲットを取得
 	ID3D11RenderTargetView* rtv = nullptr;

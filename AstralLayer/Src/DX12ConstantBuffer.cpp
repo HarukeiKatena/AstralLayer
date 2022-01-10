@@ -28,17 +28,17 @@ bool AstralLayerDirectX12::DX12ConstantBuffer::CreateConstantBuffer(
     if (FAILED(hr))
         return false;
 
-    for (unsigned long i = 0; i < m_ObjectSize; i++)
+    for (unsigned long long i = 0; i < m_ObjectSize; i++)
     {
         //ビューデスク
         D3D12_CONSTANT_BUFFER_VIEW_DESC cbv{};
         cbv.SizeInBytes = CalcAlignment(m_StructureSize) * m_Width;
-        cbv.BufferLocation = m_pResourceArray->GetGPUVirtualAddress() + static_cast<unsigned long long>(cbv.SizeInBytes * i);
+        cbv.BufferLocation = m_pResourceArray->GetGPUVirtualAddress() + static_cast<unsigned long long>(cbv.SizeInBytes) * i;
         
         //ハンドル
         D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pHeap->GetCPUDescriptorHandleForHeapStart();
         handle.ptr += 
-            i * Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+            i * static_cast<unsigned long long>(Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 
         //作成
         Device->CreateConstantBufferView(&cbv, handle);

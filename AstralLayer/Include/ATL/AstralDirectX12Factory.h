@@ -35,7 +35,7 @@ namespace AstralLayerFactory
 		AstralLayer::ATLIDevice* CreateDevice()override;
 
 		/****************************************************************//**
-		 *  @see AstralLayerFactory::ATLIFactory::Release()
+		 *  @see AstralLayerFactory::ATLIFactory::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
 

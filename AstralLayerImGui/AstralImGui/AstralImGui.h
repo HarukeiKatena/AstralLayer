@@ -61,12 +61,12 @@ namespace AstralImGui
 		)override;
 
 		/****************************************************************//**
-		 * @see AstralImGui::ATLIImGui::Begin()
+		 * @see AstralImGui::ATLIImGui::ImGuiBegin()
 		 *******************************************************************/
 		void Begin()override;
 
 		/****************************************************************//**
-		 * @see AstralImGui::ATLIImGui::End()
+		 * @see AstralImGui::ATLIImGui::ImGuiEnd()
 		 *******************************************************************/
 		AstralLayer::ATLICommandList* End(
 			AstralLayer::ATLIFence* pFence,
@@ -91,12 +91,12 @@ namespace AstralImGui
 		)override;
 
 		/****************************************************************//**
-		 * @see AstralImGui::ATLIImGui::Begin()
+		 * @see AstralImGui::ATLIImGui::ImGuiBegin()
 		 *******************************************************************/
 		void Begin()override;
 
 		/****************************************************************//**
-		 * @see AstralImGui::ATLIImGui::End()
+		 * @see AstralImGui::ATLIImGui::ImGuiEnd()
 		 *******************************************************************/
 		AstralLayer::ATLICommandList* End(
 			AstralLayer::ATLIFence* pFence,
