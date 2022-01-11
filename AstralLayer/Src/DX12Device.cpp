@@ -230,16 +230,77 @@ void AstralLayerDirectX12::DX12Device::Release()
 
 bool AstralLayerDirectX12::DX12Device::Create(IDXGIFactory1* pFactory)
 {
-    pFactory;//使わない
+    //アダプター準備
+    IDXGIAdapter1* pAdapter;
+    IDXGIAdapter1* vAdapters[8] = {};
+
+    unsigned int id = 0;
+
+    if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&pFactory))))
+        return false;
+
+    for (unsigned int i = 0; S_OK == pFactory->EnumAdapters1(i, &pAdapter); i++)
+    {
+        DXGI_ADAPTER_DESC1 desc{};
+        pAdapter->GetDesc1(&desc);
+
+        if (desc.Flags == DXGI_ADAPTER_FLAG_SOFTWARE)
+        {
+            pAdapter->Release();
+            continue;
+        }
+
+        for (unsigned int c = 0; c <= id; c++)
+        {
+            if (vAdapters[c] == nullptr)
+            {
+                vAdapters[c] = pAdapter;
+                break;
+            }
+
+            DXGI_ADAPTER_DESC1 check{};
+            vAdapters[c]->GetDesc1(&check);
+
+            //ビデオメモリがチェック先より大きい場合
+            if (check.DedicatedVideoMemory < desc.DedicatedVideoMemory)
+            {
+                IDXGIAdapter1* save = vAdapters[c];
+                vAdapters[c] = pAdapter;
+                vAdapters[c + 1] = save;
+                desc = check;
+            }
+        }
+
+        id++;
+
+        //IDが8を超えたらアダプターの列挙を終える
+        if (id >= 8)
+            break;
+    }
+
+    pFactory->Release();
 
     //デバイス作成
-    HRESULT hr = D3D12CreateDevice(
-        nullptr,
-        D3D_FEATURE_LEVEL_11_0,
-        IID_PPV_ARGS(&m_pDevice)
-    );
-    ATLAssertMessage(SUCCEEDED(hr), "Deviceの作成に失敗しました");
-    if (FAILED(hr))
+    for (unsigned int i = 0; i < id; i++)
+    {
+        if (m_pDevice != nullptr)
+        {
+            vAdapters[i]->Release();
+            vAdapters[i] = nullptr;
+            continue;
+        }
+
+        D3D12CreateDevice(
+            vAdapters[i],
+            D3D_FEATURE_LEVEL_11_0,
+            IID_PPV_ARGS(&m_pDevice)
+        );
+        
+        vAdapters[i]->Release();
+        vAdapters[i] = nullptr;
+    }
+
+    if (m_pDevice == nullptr)
         return false;
 
     m_gi = ATL_GRAPHIC_INTERFACE::DirectX12;

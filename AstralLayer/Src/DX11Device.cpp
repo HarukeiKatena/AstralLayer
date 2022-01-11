@@ -10,22 +10,87 @@ AstralLayerDirectX11::DX11Device::~DX11Device()
 
 bool AstralLayerDirectX11::DX11Device::Create()
 {
+	//アダプター準備
+	IDXGIAdapter1* pAdapter;
+	IDXGIAdapter1* vAdapters[8] = {};
+	IDXGIFactory1* pFactory = NULL;
+
+	unsigned int id = 0;
+
+	if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&pFactory))))
+		return false;
+
+	for (unsigned int i = 0; S_OK == pFactory->EnumAdapters1(i, &pAdapter); i++)
+	{
+		DXGI_ADAPTER_DESC1 desc{};
+		pAdapter->GetDesc1(&desc);
+
+		if (desc.Flags == DXGI_ADAPTER_FLAG_SOFTWARE)
+		{
+			pAdapter->Release();
+			continue;
+		}
+
+		for (unsigned int c = 0; c <= id; c++)
+		{
+			if (vAdapters[c] == nullptr)
+			{
+				vAdapters[c] = pAdapter;
+				break;
+			}
+
+			DXGI_ADAPTER_DESC1 check{};
+			vAdapters[c]->GetDesc1(&check);
+
+			//ビデオメモリがチェック先より大きい場合
+			if (check.DedicatedVideoMemory < desc.DedicatedVideoMemory)
+			{
+				IDXGIAdapter1* save = vAdapters[c];
+				vAdapters[c] = pAdapter;
+				vAdapters[c + 1] = save;
+				desc = check;
+			}
+		}
+
+		id++;
+
+		//IDが8を超えたらアダプターの列挙を終える
+		if (id >= 8)
+			break;
+	}
+
+	pFactory->Release();
+
 	//DXデバイス作成
 	ID3D11Device* pDevice = nullptr;
-	HRESULT hr = D3D11CreateDevice(
-		nullptr,
-		D3D_DRIVER_TYPE_HARDWARE,
-		nullptr,
-		0,
-		nullptr,
-		0,
-		D3D11_SDK_VERSION,
-		&pDevice,
-		nullptr,
-		nullptr
-	);
-	ATLAssertMessage(SUCCEEDED(hr), "Deviceの作成に失敗しました");
-	if (FAILED(hr))
+	for (unsigned int i = 0; i < id; i++)
+	{
+		if (pDevice != nullptr)//作成に成功していた場合解放作業に入る
+		{
+			vAdapters[i]->Release();
+			vAdapters[i] = nullptr;
+			continue;
+		}
+
+		D3D11CreateDevice(
+			vAdapters[i],
+			D3D_DRIVER_TYPE_UNKNOWN,
+			nullptr,
+			0,
+			nullptr,
+			0,
+			D3D11_SDK_VERSION,
+			&pDevice,
+			nullptr,
+			nullptr
+		);
+
+		//成功失敗関係なしに利用したら解放する
+		vAdapters[i]->Release();
+		vAdapters[i] = nullptr;
+	}
+
+	if (pDevice == nullptr)
 		return false;
 
 	//デバイスをDevice5にキャスト

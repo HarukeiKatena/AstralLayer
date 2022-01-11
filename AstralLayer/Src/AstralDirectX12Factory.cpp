@@ -3,6 +3,10 @@
 
 IDXGIFactory4* AstralLayerFactory::ATLDX12Factory::CreateFactory()
 {
+#if defined(ATL_DEBUG)
+	EnableDebug();
+#endif
+
 	//ファクトリー作成
 	IDXGIFactory4* pOut = nullptr;
 	if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&pOut))))

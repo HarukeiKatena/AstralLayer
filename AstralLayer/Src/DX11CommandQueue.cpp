@@ -3,6 +3,9 @@
 
 AstralLayerDirectX11::DX11CommandQueue::~DX11CommandQueue()
 {
+	m_pImmidiateContext->ClearState();
+	m_pImmidiateContext->Flush();
+
 	//イミディエイトコンテキストリリース
 	if (m_pImmidiateContext != nullptr)
 		m_pImmidiateContext->Release();

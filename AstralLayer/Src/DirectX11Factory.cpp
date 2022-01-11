@@ -8,6 +8,7 @@ AstralLayer::ATLIDevice* AstralLayerFactory::ATLDX11Factory::CreateDevice()
 	AstralLayerDirectX11::DX11Device* pOut = new AstralLayerDirectX11::DX11Device();
 	if (pOut->Create()== false)
 	{
+		ATLAssertMessage(false, "Device‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
 		delete pOut;
 		pOut = nullptr;
 	}

@@ -48,8 +48,8 @@ bool AstralLayerDirectX12::DX12SwapChain::Create(
 	desc.Flags = 0;
 	
 	DXGI_SWAP_CHAIN_FULLSCREEN_DESC full{};
-	full.RefreshRate.Denominator = 60;
-	full.RefreshRate.Numerator = 0;
+	full.RefreshRate.Denominator = 1;
+	full.RefreshRate.Numerator = 60;
 	full.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	full.Windowed = Desc.Windowed;
 

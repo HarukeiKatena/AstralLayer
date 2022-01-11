@@ -102,7 +102,6 @@
  *******************************************************************/
 enum class ATL_GRAPHIC_INTERFACE
 {
-	UNKOWN,		//!< Žg‚Á‚Ä‚Í‚¢‚¯‚È‚¢
 	DirectX11,
 	DirectX12,
 	//OpenGL,

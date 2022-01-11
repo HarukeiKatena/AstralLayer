@@ -59,6 +59,9 @@ D3D11_PRIMITIVE_TOPOLOGY AstralLayerDirectX11::DX11CommandList::ConvToporogy(
 
 AstralLayerDirectX11::DX11CommandList::~DX11CommandList()
 {
+	m_pDeferredContext->ClearState();
+	m_pDeferredContext->Flush();
+
 	//デファードコンテキストリリース
 	if (m_pDeferredContext != nullptr)
 		m_pDeferredContext->Release();
