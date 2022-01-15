@@ -69,7 +69,7 @@ AstralLayerDirectX11::DX11CommandList::~DX11CommandList()
 bool AstralLayerDirectX11::DX11CommandList::Create(
 	ID3D11Device* pDevice)
 {
-	//ƒfƒtƒ@[ƒhƒRƒ“ƒeƒLƒXƒgì¬
+	//ãƒ‡ãƒ•ã‚¡ãƒ¼ãƒ‰ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆä½œæˆ
 	if (FAILED(pDevice->CreateDeferredContext(0, &m_pDeferredContext)))
 		return false;
 
@@ -80,9 +80,9 @@ bool AstralLayerDirectX11::DX11CommandList::Reset(
 	AstralLayer::ATLIPipeLine* pPipeLine, 
 	AstralLayer::ATLIFence* pFence)
 {
-	pFence;//g‚í‚È‚¢
+	pFence;//ä½¿ã‚ãªã„
 
-	//ƒRƒ}ƒ“ƒhƒŠƒXƒg‚ªnull‚Å‚Í‚È‚¢ê‡ƒŠƒŠ[ƒX
+	//ã‚³ãƒãƒ³ãƒ‰ãƒªã‚¹ãƒˆãŒnullã§ã¯ãªã„å ´åˆãƒªãƒªãƒ¼ã‚¹
 	if (m_pCommandList != nullptr)
 	{
 		m_pCommandList->Release();
@@ -92,30 +92,30 @@ bool AstralLayerDirectX11::DX11CommandList::Reset(
 	if (pPipeLine == nullptr)
 		return true;
 
-	//ƒpƒCƒvƒ‰ƒCƒ“‚ğó‚¯æ‚é
+	//ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚’å—ã‘å–ã‚‹
 	DX11PipeLineState* pipeline = nullptr;
 	reinterpret_cast<AstralRHI::RHIPipeLine*>(pPipeLine)->
 		GetHandle(reinterpret_cast<void**>(&pipeline), PIPELINE_PIPELINE);
 
-	//ƒVƒF[ƒ_[
+	//ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
 	m_pDeferredContext->IASetInputLayout(pipeline->InputLayout.Get());
 	m_pDeferredContext->VSSetShader(pipeline->VertexShader.Get(), nullptr, 0);
 	m_pDeferredContext->PSSetShader(pipeline->PixelShader.Get(), nullptr, 0);
 
-	//ƒuƒŒƒ“ƒhƒXƒe[ƒg
+	//ãƒ–ãƒ¬ãƒ³ãƒ‰ã‚¹ãƒ†ãƒ¼ãƒˆ
 	float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_pDeferredContext->OMSetBlendState(pipeline->BlendState.Get(), BlendFactor, 0xffffffff);
 
-	//ƒ‰ƒXƒ^ƒ‰ƒCƒU[
+	//ãƒ©ã‚¹ã‚¿ãƒ©ã‚¤ã‚¶ãƒ¼
 	m_pDeferredContext->RSSetState(pipeline->Rasterizer.Get());
 
-	//ƒfƒvƒXƒXƒeƒ“ƒVƒ‹ƒXƒe[ƒg
+	//ãƒ‡ãƒ—ã‚¹ã‚¹ãƒ†ãƒ³ã‚·ãƒ«ã‚¹ãƒ†ãƒ¼ãƒˆ
 	m_pDeferredContext->OMSetDepthStencilState(pipeline->DepthStencil.Get(), 0);
 
-	//ƒ‹[ƒgƒpƒ‰ƒ[ƒ^[
+	//ãƒ«ãƒ¼ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼
 	m_pRootDesc = &pipeline->Parametor;
 
-	//ƒTƒ“ƒvƒ‰[
+	//ã‚µãƒ³ãƒ—ãƒ©ãƒ¼
 	for (unsigned int i = 0; i <  pipeline->Sampler.NumSampler; i++)
 	{
 		DX11Sampler* sampler = &pipeline->Sampler.pSampler[i];
@@ -158,23 +158,23 @@ void AstralLayerDirectX11::DX11CommandList::SetResource(
 		{
 		case ATL_DESCRIPTOR_TYPE::CBV:
 		{
-			//ƒoƒbƒtƒ@[ó‚¯æ‚é
+			//ãƒãƒƒãƒ•ã‚¡ãƒ¼å—ã‘å–ã‚‹
 			ID3D11Buffer* buffer = nullptr;
 			reinterpret_cast<AstralRHI::RHIResource*>(pResource)->
 				GetHandle(reinterpret_cast<void**>(&buffer), id);
 
-			//ƒZƒbƒg
+			//ã‚»ãƒƒãƒˆ
 			SetCBV(&parametor, buffer);
 		}
 			break;
 		case ATL_DESCRIPTOR_TYPE::SRV:
 		{
-			//SRVó‚¯æ‚é
+			//SRVå—ã‘å–ã‚‹
 			ID3D11ShaderResourceView* srv = nullptr;
 			reinterpret_cast<AstralRHI::RHIResource*>(pResource)->
 				GetHandle(reinterpret_cast<void**>(&srv), id);
 
-			//ƒZƒbƒg
+			//ã‚»ãƒƒãƒˆ
 			SetSRV(&parametor, srv);
 		}
 			break;
@@ -190,7 +190,7 @@ void AstralLayerDirectX11::DX11CommandList::SetViewports(
 	unsigned int NumViewports, 
 	ATL_VIEWPORT* pViewports)
 {
-	//ƒZƒbƒgƒrƒ…[ƒ|[ƒg
+	//ã‚»ãƒƒãƒˆãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆ
 	m_pDeferredContext->RSSetViewports(
 		NumViewports,
 		reinterpret_cast<D3D11_VIEWPORT*>(pViewports));
@@ -200,7 +200,7 @@ void AstralLayerDirectX11::DX11CommandList::SetScissorRects(
 	unsigned int NumRects, 
 	ATL_RECT* pRects)
 {
-	//ƒZƒbƒgƒŒƒNƒg
+	//ã‚»ãƒƒãƒˆãƒ¬ã‚¯ãƒˆ
 	m_pDeferredContext->RSSetScissorRects(
 		NumRects,
 		reinterpret_cast<D3D11_RECT*>(pRects));
@@ -209,7 +209,7 @@ void AstralLayerDirectX11::DX11CommandList::SetScissorRects(
 void AstralLayerDirectX11::DX11CommandList::SetPrimitiveTopology(
 	ATL_PRIMITIVE_TOPOLOGY Topology)
 {
-	//ƒZƒbƒgƒgƒ|ƒƒW[
+	//ã‚»ãƒƒãƒˆãƒˆãƒãƒ­ã‚¸ãƒ¼
 	m_pDeferredContext->IASetPrimitiveTopology(ConvToporogy(Topology));
 }
 
@@ -217,22 +217,22 @@ void AstralLayerDirectX11::DX11CommandList::SetVertexBuffer(
 	AstralLayer::ATLIResource* pVertex, 
 	unsigned int ResourceID)
 {
-	//’¸“_ƒoƒbƒtƒ@[‚Å‚È‚¢ê‡ˆ—‚µ‚È‚¢
+	//é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ãƒ¼ã§ãªã„å ´åˆå‡¦ç†ã—ãªã„
 	if (pVertex->GetFlag() != ATL_RESOURCE_FLAG::VERTEXBUFFER)
 		return;
 
-	//ƒŠƒ\[ƒXæ“¾
+	//ãƒªã‚½ãƒ¼ã‚¹å–å¾—
 	AstralRHI::RHIResource* resource = reinterpret_cast<AstralRHI::RHIResource*>(pVertex);
 
-	//’¸“_ó‚¯æ‚é
+	//é ‚ç‚¹å—ã‘å–ã‚‹
 	ID3D11Buffer* vertex = nullptr;
 	resource->GetHandle(reinterpret_cast<void**> (&vertex), ResourceID);
 
-	//strideó‚¯æ‚é
+	//strideå—ã‘å–ã‚‹
 	unsigned int* stride = 0;
 	resource->GetHandle(reinterpret_cast<void**>(&stride), RESOURCE_STRUCTURESIZE);
 
-	//ƒZƒbƒg
+	//ã‚»ãƒƒãƒˆ
 	unsigned int offset = 0;
 	m_pDeferredContext->IASetVertexBuffers(0, 1, &vertex, stride, &offset);
 }
@@ -241,30 +241,30 @@ void AstralLayerDirectX11::DX11CommandList::SetIndexBuffer(
 	AstralLayer::ATLIResource* pIndexBuffer, 
 	unsigned int ResourceID)
 {
-	//ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@[‚Å‚È‚¢ê‡ˆ—‚µ‚È‚¢
+	//ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ãƒ¼ã§ãªã„å ´åˆå‡¦ç†ã—ãªã„
 	if (pIndexBuffer->GetFlag() != ATL_RESOURCE_FLAG::INDEXBUFFER)
 		return;
 
-	//ƒŠƒ\[ƒXæ“¾
+	//ãƒªã‚½ãƒ¼ã‚¹å–å¾—
 	AstralRHI::RHIResource* resource = 
 		reinterpret_cast<AstralRHI::RHIResource*>(pIndexBuffer);
 
-	//’¸“_ó‚¯æ‚é
+	//é ‚ç‚¹å—ã‘å–ã‚‹
 	ID3D11Buffer* index = nullptr;
 	resource->GetHandle(reinterpret_cast<void**> (&index), ResourceID);
 
-	//ƒtƒH[ƒ}ƒbƒgæ“¾
+	//ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆå–å¾—
 	DXGI_FORMAT* format = nullptr;
 	resource->GetHandle(reinterpret_cast<void**>(&format), RESOURCE_FORMAT);
 
-	//ƒZƒbƒg
+	//ã‚»ãƒƒãƒˆ
 	m_pDeferredContext->IASetIndexBuffer(index, *format, 0);
 }
 
 void AstralLayerDirectX11::DX11CommandList::ResourceBarrier(
 	ATL_RESOURCE_BARRIER& Barrier)
 {
-	//11‚Å‚ÍƒoƒŠƒA‚Íg‚í‚È‚¢
+	//11ã§ã¯ãƒãƒªã‚¢ã¯ä½¿ã‚ãªã„
 	Barrier;
 }
 
@@ -272,12 +272,12 @@ void AstralLayerDirectX11::DX11CommandList::SetRenderTargets(
 	AstralLayer::ATLIRenderTargetView* pRenderTargetView, 
 	AstralLayer::ATLIDepthStencilView* pDepthStencilView)
 {
-	//RTV‚ğó‚¯æ‚é
+	//RTVã‚’å—ã‘å–ã‚‹
 	ID3D11RenderTargetView* rtv = nullptr;
 	reinterpret_cast<AstralRHI::RHIRenderTargetView*>(pRenderTargetView)->
 		GetHandle(reinterpret_cast<void**>(&rtv), RTV_RTV);
 
-	//DSV‚ğó‚¯æ‚é@NULL‚Ìê‡‚Íó‚¯æ‚ç‚È‚¢
+	//DSVã‚’å—ã‘å–ã‚‹ã€€NULLã®å ´åˆã¯å—ã‘å–ã‚‰ãªã„
 	ID3D11DepthStencilView* dsv = nullptr;
 	if (pDepthStencilView != nullptr)
 	{
@@ -285,7 +285,7 @@ void AstralLayerDirectX11::DX11CommandList::SetRenderTargets(
 			GetHandle(reinterpret_cast<void**>(&dsv), DSV_DSV);
 	}
 
-	//ƒZƒbƒg
+	//ã‚»ãƒƒãƒˆ
 	m_pDeferredContext->OMSetRenderTargets(1, &rtv, dsv);
 }
 
@@ -293,12 +293,12 @@ void AstralLayerDirectX11::DX11CommandList::ClearRenderTargetView(
 	AstralLayer::ATLIRenderTargetView* pRenderTargetView, 
 	const float ColorRGBA[4])
 {
-	//RTV‚ğó‚¯æ‚é
+	//RTVã‚’å—ã‘å–ã‚‹
 	ID3D11RenderTargetView* rtv = nullptr;
 	reinterpret_cast<AstralRHI::RHIRenderTargetView*>(pRenderTargetView)->
 		GetHandle(reinterpret_cast<void**>(&rtv), RTV_RTV);
 
-	//ƒZƒbƒg
+	//ã‚»ãƒƒãƒˆ
 	m_pDeferredContext->ClearRenderTargetView(rtv, ColorRGBA);
 }
 
@@ -308,12 +308,12 @@ void AstralLayerDirectX11::DX11CommandList::ClearDepthStencilView(
 	float Depth, 
 	unsigned char Stencil)
 {
-	//DSV‚ğó‚¯æ‚é
+	//DSVã‚’å—ã‘å–ã‚‹
 	ID3D11DepthStencilView* dsv = nullptr;
 	reinterpret_cast<AstralRHI::RHIDepthStencilView*>(pDepthStencilView)->
 		GetHandle(reinterpret_cast<void**>(&dsv), DSV_DSV);
 
-	//ƒZƒbƒg
+	//ã‚»ãƒƒãƒˆ
 	m_pDeferredContext->ClearDepthStencilView(dsv, static_cast<unsigned int>(ClearFlags), Depth, Stencil);
 }
 
@@ -323,7 +323,7 @@ void AstralLayerDirectX11::DX11CommandList::DrawInstanced(
 	unsigned int StartVertexLocation, 
 	unsigned int StartInstanceLocation)
 {
-	//ƒZƒbƒg
+	//ã‚»ãƒƒãƒˆ
 	m_pDeferredContext->DrawInstanced(
 		VertexCountParInstance,
 		InstanceCount,
@@ -339,7 +339,7 @@ void AstralLayerDirectX11::DX11CommandList::DrawIndexedInstanced(
 	unsigned int BaceVertexLocation, 
 	unsigned int StartInstanceLocation)
 {
-	//ƒZƒbƒg
+	//ã‚»ãƒƒãƒˆ
 	m_pDeferredContext->DrawIndexedInstanced(
 		IndexCountParInstance,
 		InstanceCount,
@@ -350,7 +350,7 @@ void AstralLayerDirectX11::DX11CommandList::DrawIndexedInstanced(
 
 bool AstralLayerDirectX11::DX11CommandList::Close()
 {
-	//•Â‚¶‚é
+	//é–‰ã˜ã‚‹
 	return FAILED(m_pDeferredContext->FinishCommandList(false, &m_pCommandList));
 }
 
@@ -363,7 +363,7 @@ void AstralLayerDirectX11::DX11CommandList::GetHandle(
 	void** pResource, 
 	int Handle)
 {
-	//ƒf[ƒ^‚ğ“n‚·
+	//ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã™
 	switch (Handle)
 	{
 	case COMMANDLIST_CONTEXT:
