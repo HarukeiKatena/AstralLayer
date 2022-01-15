@@ -10,6 +10,7 @@
 /// 前方宣言
 namespace AstralLayer
 {
+    class ATLIUnknown;
     class ATLICommandList;
     class ATLIPipeLine;
     class ATLIFence;
@@ -639,7 +640,12 @@ struct ATL_GRAPHICS_PIPELINE_STATE_DESC
 struct ATL_RESOURCE_BARRIER
 {
     ATL_BARRIER_TYPE Type;                  //!< タイプ
-    AstralLayer::ATLIResource* pResource;   //!< リソース
     ATL_RESOURCE_STATE StateBefore;         //!< ステータス使用前
     ATL_RESOURCE_STATE StateAfter;          //!< ステータス使用後
+
+    union
+    {
+        AstralLayer::ATLIResource* pResource;   //!< リソース
+        AstralLayer::ATLIRenderTargetView* pRenderTargetView; //!< RTV
+    };
 };

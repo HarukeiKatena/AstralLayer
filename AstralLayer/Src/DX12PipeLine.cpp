@@ -314,7 +314,7 @@ D3D12_STATIC_SAMPLER_DESC* AstralLayerDirectX12::DX12PipeLine::CreateSampler(ATL
 	return out;
 }
 
-ID3D12RootSignature* AstralLayerDirectX12::DX12PipeLine::CreateRootSignature(
+bool AstralLayerDirectX12::DX12PipeLine::CreateRootSignature(
 	ID3D12Device* pDevice, 
 	ATL_ROOT_SIGNATURE_DESC& root)
 {
@@ -350,21 +350,20 @@ ID3D12RootSignature* AstralLayerDirectX12::DX12PipeLine::CreateRootSignature(
 	delete[] param;
 	delete[] sampler;
 	if (FAILED(hr))
-		return nullptr;
+		return false;
 
 	//ルートシグネチャー作成
-	ID3D12RootSignature* pOut = nullptr;
 	pDevice->CreateRootSignature(
 		0,
 		pBlob->GetBufferPointer(),
 		pBlob->GetBufferSize(),
-		IID_PPV_ARGS(&pOut)
+		IID_PPV_ARGS(&m_pRootSignature)
 	);
 	pBlob->Release();
-	if(FAILED(hr))
-		return nullptr;
+	if (FAILED(hr))
+		return false;
 
-	return pOut;
+	return true;
 }
 
 D3D12_BLEND_OP AstralLayerDirectX12::DX12PipeLine::ConvBlendOP(ATL_BLEND_OP blend)
@@ -382,10 +381,7 @@ D3D12_BLEND_OP AstralLayerDirectX12::DX12PipeLine::ConvBlendOP(ATL_BLEND_OP blen
 
 AstralLayerDirectX12::DX12PipeLine::~DX12PipeLine()
 {
-	if (m_pPipeLine != nullptr)
-		m_pPipeLine->Release();
-	if(m_pRootSignature != nullptr)
-		m_pRootSignature->Release();
+
 }
 
 void AstralLayerDirectX12::DX12PipeLine::GetHandle(
@@ -395,10 +391,10 @@ void AstralLayerDirectX12::DX12PipeLine::GetHandle(
 	switch (Handle)
 	{
 	case 0:
-		*ppOut = m_pPipeLine;
+		*ppOut = m_pPipeLine.Get();
 		break;
 	case 1:
-		*ppOut = m_pRootSignature;
+		*ppOut = m_pRootSignature.Get();
 		break;
 	default:
 		break;
@@ -415,8 +411,7 @@ bool AstralLayerDirectX12::DX12PipeLine::Create(
 	ATL_GRAPHICS_PIPELINE_STATE_DESC& Desc)
 {
 	//ルートシグネチャー準備
-	m_pRootSignature = CreateRootSignature(pDevice,Desc.RootSignature);
-	if(m_pRootSignature == nullptr)
+	if(CreateRootSignature(pDevice, Desc.RootSignature) == false)
 		return false;
 
 	//ブレンドステート準備
@@ -437,7 +432,7 @@ bool AstralLayerDirectX12::DX12PipeLine::Create(
 
 	//パイプラインデスク準備
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc{};
-	desc.pRootSignature = m_pRootSignature;
+	desc.pRootSignature = m_pRootSignature.Get();
 	if (Desc.VS.BytecodeLength != 0)
 		desc.VS = { Desc.VS.pShaderBytecode,Desc.VS.BytecodeLength };
 	if (Desc.PS.BytecodeLength != 0)

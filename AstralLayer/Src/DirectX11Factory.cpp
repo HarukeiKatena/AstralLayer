@@ -2,6 +2,11 @@
 #include"../Include/ATL/AstralDirectX11.h"
 #include"../Include/AstralDebug.h"
 
+AstralLayerFactory::ATLDX11Factory::ATLDX11Factory()
+{
+
+}
+
 AstralLayer::ATLIDevice* AstralLayerFactory::ATLDX11Factory::CreateDevice()
 {
 	//ATLデバイス作成

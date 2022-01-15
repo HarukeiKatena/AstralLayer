@@ -22,15 +22,14 @@ AstralLayerFactory::ATLDX12Factory::ATLDX12Factory()
 
 AstralLayerFactory::ATLDX12Factory::~ATLDX12Factory()
 {
-	if (m_pFactory != nullptr)
-		m_pFactory->Release();
+
 }
 
 AstralLayer::ATLIDevice* AstralLayerFactory::ATLDX12Factory::CreateDevice()
 {
 	//デバイス作成
 	AstralLayerDirectX12::DX12Device* pOut = new AstralLayerDirectX12::DX12Device();
-	if (pOut->Create(m_pFactory) == false)
+	if (pOut->Create(m_pFactory.Get()) == false)
 	{
 		ATLAssertMessage(false, "Deviceの作成に失敗しました");
 		delete pOut;
@@ -48,6 +47,7 @@ void AstralLayerFactory::ATLDX12Factory::EnableDebug()
 	{
 		DebugController->EnableDebugLayer();//成功したらデバッグ開始
 		DebugController->Release();
+
 	}
 }
 

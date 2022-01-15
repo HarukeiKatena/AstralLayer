@@ -16,8 +16,6 @@ AstralLayerFactory::ATLIFactory* AstralLayerFactory::CreateAstralFactory(
 #if defined(ATLGI_DX12)//DirectX12
 	case ATL_GRAPHIC_INTERFACE::DirectX12: return new AstralLayerFactory::ATLDX12Factory();
 #endif
-
-
 	default: return nullptr;
 	}
 }

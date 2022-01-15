@@ -15,8 +15,8 @@ AstralLayerDirectX12::DX12Resource::~DX12Resource()
         if (m_pResourceArray != nullptr)
             m_pResourceArray->Unmap(0, nullptr);
     }
-
-    m_pResourceArray->Release();
+    
+    m_pResourceArray.Reset();
 }
 
 unsigned int AstralLayerDirectX12::DX12Resource::SetSubResource(

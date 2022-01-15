@@ -3,8 +3,7 @@
 
 AstralLayerDirectX12::DX12ConstantBuffer::~DX12ConstantBuffer()
 {
-	if (m_pHeap != nullptr)
-		m_pHeap->Release();
+    m_pHeap.Reset();
 }
 
 bool AstralLayerDirectX12::DX12ConstantBuffer::CreateConstantBuffer(
@@ -54,10 +53,10 @@ void AstralLayerDirectX12::DX12ConstantBuffer::GetHandle(
     switch (Handle)
     {
     case RESOURCE_DRAW:
-        *ppOut = m_pHeap;
+        *ppOut = m_pHeap.Get();
         break;
     case RESOURCE_DATA:
-        *ppOut = m_pResourceArray;
+        *ppOut = m_pResourceArray.Get();
         break;
     default:
         break;

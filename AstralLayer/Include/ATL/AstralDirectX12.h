@@ -37,7 +37,7 @@ namespace AstralLayerDirectX12
 	class DX12Device : public AstralRHI::RHIDevice
 	{
 	private:
-		ID3D12Device* m_pDevice = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Device> m_pDevice = nullptr;
 
 	public:
 
@@ -133,8 +133,8 @@ namespace AstralLayerDirectX12
 	class DX12CommandList : public AstralRHI::RHICommandList
 	{
 	private:
-		ID3D12GraphicsCommandList* m_pCommandList = nullptr;	//!< コマンドリスト
-		ID3D12CommandAllocator* m_pAllocator = nullptr;			//!< アロケーター
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_pCommandList = nullptr;	//!< コマンドリスト
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_pAllocator = nullptr;			//!< アロケーター
 
 		unsigned int m_BackBuffer = 0;							//!< バックバッファー
 
@@ -302,7 +302,7 @@ namespace AstralLayerDirectX12
 		unsigned int m_StructureSize = 0;			//!< 構造体サイズ
 		unsigned int m_Width = 0;					//!< 幅
 		unsigned int m_ObjectSize = 0;				//!< オブジェクト数
-		ID3D12Resource* m_pResourceArray = nullptr;	//!< リソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> m_pResourceArray = nullptr;	//!< リソース
 		char* m_pSubResource = nullptr;				//!< サブリソース
 		unsigned int m_UseIndex = 0;				//!< 現在選択してるインデックス
 
@@ -361,7 +361,7 @@ namespace AstralLayerDirectX12
 	class DX12ConstantBuffer : public DX12Resource
 	{
 	private:
-		ID3D12DescriptorHeap* m_pHeap = nullptr; //!< リソース
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_pHeap = nullptr; //!< リソース
 
 	public:
 		/****************************************************************//**
@@ -475,12 +475,12 @@ namespace AstralLayerDirectX12
 	class DX12Texture2D : public AstralRHI::RHIResource
 	{
 	private:
-		ID3D12Resource* m_pTexture = nullptr;		//!< テクスチャ
+		Microsoft::WRL::ComPtr<ID3D12Resource> m_pTexture = nullptr;		//!< テクスチャ
 		DXGI_FORMAT m_Format = DXGI_FORMAT_UNKNOWN;	//!< フォーマット
 		unsigned int m_Width = 0;					//!< 幅
 		unsigned int m_Height = 0;					//!< 高さ
 		unsigned int m_FormatSize = 0;				//!< フォーマットサイズ
-		ID3D12DescriptorHeap* m_pHeap = nullptr;	//!< ヒープ
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_pHeap = nullptr;	//!< ヒープ
 
 
 		constexpr unsigned int CallRowPitch();	//!< 行の長さのサイズ計算
@@ -537,8 +537,7 @@ namespace AstralLayerDirectX12
 		);
 	};
 
-	static const int RTVRESOURCE_HEAP = 0;		//!< AstralDirectX12::DX12RTVResource::GetHandle()で利用する定数
-	static const int RTVRESOURCE_RESOURCE = 1;	//!< AstralDirectX12::DX12RTVResource::GetHandle()で利用する定数
+	// Gethandleの定数はDX12RenderTargetViewの所にあります
 
 	/****************************************************************//**
 	 * DX12RenderTargetView::GetResource()で使う専用のリソース
@@ -547,20 +546,16 @@ namespace AstralLayerDirectX12
 	class DX12RTVResource : public AstralRHI::RHIResource
 	{
 	private:
-		ID3D12Resource* m_pResource = nullptr;	//!< リソースデータ
-		ID3D12DescriptorHeap* m_pHeap = nullptr;//!< ヒープ
+		unsigned int m_ArraySize = 0;				//!< 配列サイズ
+		Microsoft::WRL::ComPtr<ID3D12Resource>* m_pRenderTargets = nullptr;//!< RTVリソース配列
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_pHeap = nullptr;	//!< ヒープ
+
+		DX12RenderTargetView* m_pParentRTV = nullptr;//!< 自分を管理しているRTV
 
 	public:
-		/****************************************************************//**
-		 * リソース情報をセットする
-		 * 
-		 * \param pResource [in] リソース
-		 * \param pHeap [in] ヒープ
-		 *******************************************************************/
-		void SetResource(
-			ID3D12Resource* pResource,
-			ID3D12DescriptorHeap* pHeap
-		);
+		friend DX12RenderTargetView;
+
+		virtual ~DX12RTVResource();
 
 		/****************************************************************//**
 		 * @see Astrallayer::ATLIResource::SetSubResource()
@@ -599,15 +594,16 @@ namespace AstralLayerDirectX12
 	static const int RTV_HEAP = 0;		//!< AstralDirectX12::DX12RenderTargetView::GetHandle()で利用する定数
 	static const int RTV_RESOURCE = 1;	//!< AstralDirectX12::DX12RenderTargetView::GetHandle()で利用する定数
 
+	static const int RTVRESOURCE_HEAP = RTV_HEAP;			//!< AstralDirectX12::DX12RTVResource::GetHandle()で利用する定数
+	static const int RTVRESOURCE_RESOURCE = RTV_RESOURCE;	//!< AstralDirectX12::DX12RTVResource::GetHandle()で利用する定数
+
 	/****************************************************************//**
 	 * DX12レンダーターゲットビュー
 	 *******************************************************************/
 	class DX12RenderTargetView : public AstralRHI::RHIRenderTargetView
 	{
 	private:
-		unsigned int m_ArraySize = 0;				//!< 配列サイズ
-		ID3D12Resource** m_pRenderTargets = nullptr;//!< RTVリソース配列
-		ID3D12DescriptorHeap* m_pHeap = nullptr;	//!< ヒープ
+		DX12RTVResource* m_pRTV;
 
 	public:
 		/****************************************************************//**
@@ -660,8 +656,8 @@ namespace AstralLayerDirectX12
 	class DX12DepthStencilView : public AstralRHI::RHIDepthStencilView
 	{
 	private:
-		ID3D12DescriptorHeap* m_pdsvHeap = nullptr;
-		ID3D12Resource* m_pResource = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_pdsvHeap = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Resource> m_pResource = nullptr;
 
 	private:
 		D3D12_DSV_DIMENSION ConvDimension(ATL_DSV_DIMENSION dimension);
@@ -706,7 +702,7 @@ namespace AstralLayerDirectX12
 	class DX12CommandQueue : public AstralRHI::RHICommandQueue
 	{
 	private:
-		ID3D12CommandQueue* m_pCommandQueue = nullptr; //!< コマンドキュー
+		Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_pCommandQueue = nullptr; //!< コマンドキュー
 
 	public:
 		/****************************************************************//**
@@ -755,8 +751,8 @@ namespace AstralLayerDirectX12
 	class DX12PipeLine : public AstralRHI::RHIPipeLine
 	{
 	private:
-		ID3D12PipelineState* m_pPipeLine = nullptr;			//!< パイプラインステート
-		ID3D12RootSignature* m_pRootSignature = nullptr;	//!< ルートシグネチャー
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pPipeLine = nullptr;			//!< パイプラインステート
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_pRootSignature = nullptr;	//!< ルートシグネチャー
 
 	private:
 		D3D12_FILL_MODE ConvFillMode(ATL_FILL_MODE mode);							//!< ATL_FILL_MODEをD3D12_FILL_MODEに変換する
@@ -788,7 +784,7 @@ namespace AstralLayerDirectX12
 			D3D12_ROOT_PARAMETER** root
 		);
 		D3D12_STATIC_SAMPLER_DESC* CreateSampler(ATL_SAMPLER_DESC* sampler, unsigned int num);			//!< サンプラーデスク作成関数
-		ID3D12RootSignature* CreateRootSignature(ID3D12Device* pDevice, ATL_ROOT_SIGNATURE_DESC& root);	//!< ルートシグネチャー作成関数
+		bool CreateRootSignature(ID3D12Device* pDevice, ATL_ROOT_SIGNATURE_DESC& root);	//!< ルートシグネチャー作成関数
 
 		
 	public:
@@ -833,7 +829,7 @@ namespace AstralLayerDirectX12
 	private:
 		unsigned int m_BufferIndex = 0;		//!< バックバッファー
 		HANDLE m_fenceEvent = NULL;			//!< イベントハンドル
-		ID3D12Fence* m_pFence = nullptr;	//!< フェンス
+		Microsoft::WRL::ComPtr<ID3D12Fence> m_pFence = nullptr;	//!< フェンス
 		unsigned long long m_fenceValue = 0;//!< フェンスカウンタ
 
 	public:
@@ -879,7 +875,7 @@ namespace AstralLayerDirectX12
 	class DX12SwapChain : public AstralRHI::RHISwapChain
 	{
 	private:
-		IDXGISwapChain3* m_pSwapChain = nullptr; //!< スワップチェイン
+		Microsoft::WRL::ComPtr<IDXGISwapChain3> m_pSwapChain = nullptr; //!< スワップチェイン
 
 	public:
 		/****************************************************************//**

@@ -13,7 +13,7 @@ namespace AstralLayerFactory
 	class ATLDX12Factory : public ATLIFactory
 	{
 	private:
-		IDXGIFactory4* m_pFactory = nullptr; //!< ファクトリー
+		Microsoft::WRL::ComPtr<IDXGIFactory4> m_pFactory = nullptr; //!< ファクトリー
 
 	private:
 		IDXGIFactory4* CreateFactory(); //!< ファクトリ作成関数

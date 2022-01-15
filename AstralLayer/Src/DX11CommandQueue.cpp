@@ -5,10 +5,6 @@ AstralLayerDirectX11::DX11CommandQueue::~DX11CommandQueue()
 {
 	m_pImmidiateContext->ClearState();
 	m_pImmidiateContext->Flush();
-
-	//ƒCƒ~ƒfƒBƒGƒCƒgƒRƒ“ƒeƒLƒXƒgƒŠƒŠ[ƒX
-	if (m_pImmidiateContext != nullptr)
-		m_pImmidiateContext->Release();
 }
 
 void AstralLayerDirectX11::DX11CommandQueue::GetHandle(
@@ -16,7 +12,7 @@ void AstralLayerDirectX11::DX11CommandQueue::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppResource = m_pImmidiateContext;
+	*ppResource = m_pImmidiateContext.Get();
 }
 
 bool AstralLayerDirectX11::DX11CommandQueue::ExecuteCommandLists(
@@ -28,12 +24,12 @@ bool AstralLayerDirectX11::DX11CommandQueue::ExecuteCommandLists(
 		if(ppCommandLists[i] == nullptr)
 			continue;
 
-		//ƒRƒ}ƒ“ƒhƒŠƒXƒgæ“¾
+		//ã‚³ãƒãƒ³ãƒ‰ãƒªã‚¹ãƒˆå–å¾—
 		ID3D11CommandList* commandlist = nullptr;
 		reinterpret_cast<AstralRHI::RHICommandList*>(ppCommandLists[i])->
 			GetHandle(reinterpret_cast<void**>(&commandlist), COMMANDLIST_COMMAND);
 
-		//ƒRƒ}ƒ“ƒhÀs
+		//ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œ
 		m_pImmidiateContext->ExecuteCommandList(commandlist, true);
 	}
 
@@ -48,14 +44,16 @@ void AstralLayerDirectX11::DX11CommandQueue::Release()
 bool AstralLayerDirectX11::DX11CommandQueue::Create(
 	ID3D11Device* pDevice)
 {
-	//ƒCƒ~ƒfƒBƒGƒCƒgƒRƒ“ƒeƒLƒXƒgæ“¾
+	//ã‚¤ãƒŸãƒ‡ã‚£ã‚¨ã‚¤ãƒˆã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå–å¾—
 	ID3D11DeviceContext* dcon = nullptr;
 	pDevice->GetImmediateContext(&dcon);
-	if (dcon == nullptr)//ˆê‰null‚¾‚Á‚½‚ç¸”s
+	if (dcon == nullptr)//ä¸€å¿œnullã ã£ãŸã‚‰å¤±æ•—
 		return false;
 
-	//DeviceContext4‚ÉƒLƒƒƒXƒg
-	m_pImmidiateContext = reinterpret_cast<ID3D11DeviceContext4*>(dcon);
+	//DeviceContext4ã«ã‚­ãƒ£ã‚¹ãƒˆ
+	dcon->QueryInterface(IID_PPV_ARGS(&m_pImmidiateContext));
+
+	dcon->Release();
 
 	return true;
 }

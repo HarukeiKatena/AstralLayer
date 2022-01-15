@@ -3,8 +3,7 @@
 
 AstralLayerDirectX11::DX11SwapChain::~DX11SwapChain()
 {
-	if (m_pSwapChain != nullptr)
-		m_pSwapChain->Release();
+
 }
 
 bool AstralLayerDirectX11::DX11SwapChain::Create(
@@ -65,7 +64,9 @@ bool AstralLayerDirectX11::DX11SwapChain::Create(
 		return false;
 
 	//スワップチェインをセット
-	m_pSwapChain = reinterpret_cast<IDXGISwapChain3*>(pCreate);
+	pCreate->QueryInterface(IID_PPV_ARGS(&m_pSwapChain));
+
+	pCreate->Release();
 
 	return true;
 }
@@ -85,5 +86,5 @@ void AstralLayerDirectX11::DX11SwapChain::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppResource = m_pSwapChain;
+	*ppResource = m_pSwapChain.Get();
 }

@@ -6,8 +6,6 @@
 //==========================================================================
 AstralLayerDirectX12::DX12CommandQueue::~DX12CommandQueue()
 {
-	if (m_pCommandQueue != nullptr)
-		m_pCommandQueue->Release();
 }
 
 void AstralLayerDirectX12::DX12CommandQueue::GetHandle(
@@ -15,7 +13,7 @@ void AstralLayerDirectX12::DX12CommandQueue::GetHandle(
     int Handle)
 {
 	Handle;
-	*ppOut = m_pCommandQueue;
+	*ppOut = m_pCommandQueue.Get();
 }
 
 bool AstralLayerDirectX12::DX12CommandQueue::ExecuteCommandLists(
@@ -43,13 +41,13 @@ bool AstralLayerDirectX12::DX12CommandQueue::ExecuteCommandLists(
 
 void AstralLayerDirectX12::DX12CommandQueue::Release()
 {
+    m_pCommandQueue.Reset();
     delete this;
 }
 
 bool AstralLayerDirectX12::DX12CommandQueue::Create(
     ID3D12Device* pDevice)
 {
-
     //コマンドキューデスク準備
     D3D12_COMMAND_QUEUE_DESC qdesc{};
     qdesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;

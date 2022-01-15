@@ -1,8 +1,18 @@
+#include"../Include/AstralLayer.h"
 #include"../Include/AstralSupport.h"
 
 #include<stdio.h>
 #include<cfloat>
 #include"../Include/AstralDebug.h"
+
+void ATLSSafeRelease(AstralLayer::ATLIUnknown** ATLClass)
+{
+	if (ATLClass != nullptr)
+	{
+		(*ATLClass)->Release();
+		*ATLClass = nullptr;
+	}
+}
 
 ATL_RESOURCE_DESC ATLSCreateConstantBufferResourceDesc(unsigned int ByteStructure, unsigned int Width, unsigned int ObjectNum, ATL_RESOURCE_TYPE Type)
 {
@@ -225,6 +235,7 @@ void ATLSShaderBinary::DeleteBuffer()
 {
 	if (m_Buffer != nullptr)
 		delete[] m_Buffer;
+	m_Buffer = nullptr;
 
 	m_Size = 0;
 }
