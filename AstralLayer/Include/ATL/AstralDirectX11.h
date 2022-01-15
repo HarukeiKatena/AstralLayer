@@ -34,7 +34,7 @@ namespace AstralLayerDirectX11
 	{	
 		unsigned int SamplerRegister;
 		ATL_SHADER_VISIBILITY SamplerVisibility;
-		ID3D11SamplerState* pSamplerState = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerState = nullptr;
 	};
 
 	/****************************************************************//**
@@ -45,19 +45,20 @@ namespace AstralLayerDirectX11
 		DX11Sampler* pSampler;
 		unsigned int NumSampler;
 	};
+	
 
 	/****************************************************************//**
 	 * DX11で利用するパイプライン構造体
 	 *******************************************************************/
 	struct DX11PipeLineState
 	{
-		ID3D11InputLayout* InputLayout = nullptr;
-		ID3D11VertexShader* VertexShader = nullptr;
-		ID3D11PixelShader* PixelShader = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11InputLayout> InputLayout = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader> VertexShader = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader> PixelShader = nullptr;
 
-		ID3D11BlendState* BlendState = nullptr;
-		ID3D11RasterizerState* Rasterizer = nullptr;
-		ID3D11DepthStencilState* DepthStencil = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11BlendState> BlendState = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11RasterizerState> Rasterizer = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> DepthStencil = nullptr;
 
 		DX11RootParametor Parametor = {};
 		DX11SamplerDesc Sampler = {};
@@ -71,7 +72,7 @@ namespace AstralLayerDirectX11
 	class DX11Device : public AstralRHI::RHIDevice
 	{
 	private:
-		ID3D11Device5* m_pDevice = nullptr; //!< DX11デバイス
+		Microsoft::WRL::ComPtr<ID3D11Device5> m_pDevice = nullptr; //!< DX11デバイス
 
 	public:
 		
@@ -165,7 +166,7 @@ namespace AstralLayerDirectX11
 	class DX11CommandList : public AstralRHI::RHICommandList
 	{
 	private:
-		ID3D11DeviceContext* m_pDeferredContext = nullptr;	//!< デファードコンテキスト
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeferredContext = nullptr;	//!< デファードコンテキスト
 		ID3D11CommandList* m_pCommandList = nullptr;		//!< コマンドリスト
 
 		DX11RootParametor* m_pRootDesc = {};				//!< DX11用ルートパラメーター
@@ -330,7 +331,7 @@ namespace AstralLayerDirectX11
 	class DX11CommandQueue : public AstralRHI::RHICommandQueue
 	{
 	private:
-		ID3D11DeviceContext4* m_pImmidiateContext = nullptr; //!< イミディエイトコンテキスト
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext4> m_pImmidiateContext = nullptr; //!< イミディエイトコンテキスト
 
 	public:
 		/****************************************************************//**
@@ -378,7 +379,7 @@ namespace AstralLayerDirectX11
 	class DX11SwapChain : public AstralRHI::RHISwapChain
 	{
 	private:
-		IDXGISwapChain3* m_pSwapChain = nullptr; //!< スワップチェイン
+		Microsoft::WRL::ComPtr<IDXGISwapChain3> m_pSwapChain = nullptr; //!< スワップチェイン
 
 	public:
 		/****************************************************************//**
@@ -429,8 +430,7 @@ namespace AstralLayerDirectX11
 	class DX11RenderTargetView : public AstralRHI::RHIRenderTargetView
 	{
 	private:
-		ID3D11RenderTargetView* m_pRenderTarget = nullptr; //<! レンダーターゲットビュー
-
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRenderTarget = nullptr; //<! レンダーターゲットビュー
 	public:
 		/****************************************************************//**
 		 * デストラクタ
@@ -481,7 +481,7 @@ namespace AstralLayerDirectX11
 	class DX11DepthStencilView : public AstralRHI::RHIDepthStencilView
 	{
 	private:
-		ID3D11DepthStencilView* m_pView = nullptr; //!< デプスステンシルビュー
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pView = nullptr; //!< デプスステンシルビュー
 
 	private:
 		D3D11_DSV_DIMENSION ConvDimension(ATL_DSV_DIMENSION Dimension);
@@ -532,9 +532,9 @@ namespace AstralLayerDirectX11
 		unsigned int m_StructureSize = 0;					//!< 構造体のバイト数
 		unsigned int m_Width = 0;							//!< 幅
 		unsigned int m_ObjectSize = 0;						//!< オブジェクト数
-		ID3D11Buffer** m_pBufferArray = nullptr;			//!< バッファー配列
+		Microsoft::WRL::ComPtr<ID3D11Buffer>* m_pBufferArray = nullptr;			//!< バッファー配列
 		unsigned int m_UseIndex = 0;						//!< 現在選択しているインデックス
-		ID3D11DeviceContext* m_pImmidiateContext = nullptr;	//!< イミディエイトコンテキスト
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pImmidiateContext = nullptr;	//!< イミディエイトコンテキスト
 		DXGI_FORMAT m_Format = DXGI_FORMAT_UNKNOWN;			//!< フォーマット
 
 	protected:
@@ -608,9 +608,9 @@ namespace AstralLayerDirectX11
 	{
 	private:
 		unsigned int m_ByteSize = 0;
-		ID3D11Texture2D* m_pTexture = nullptr;
-		ID3D11ShaderResourceView* m_pSRV = nullptr;
-		ID3D11DeviceContext* m_pImmidiateContext = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pTexture = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSRV = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pImmidiateContext = nullptr;
 
 	public:
 		virtual ~DX11Texture2D();
@@ -667,7 +667,7 @@ namespace AstralLayerDirectX11
 	class DX11RTVResource : public AstralRHI::RHIResource
 	{
 	private:
-		ID3D11Resource* m_pBuffer = nullptr; //!< バッファー
+		Microsoft::WRL::ComPtr<ID3D11Resource> m_pBuffer = nullptr; //!< バッファー
 
 	public:
 		/****************************************************************//**
@@ -722,7 +722,7 @@ namespace AstralLayerDirectX11
 	class DX11Fence : public AstralRHI::RHIFence
 	{
 	private:
-		ID3D11Fence* m_pFence = nullptr;		//!< フェンスクラス
+		Microsoft::WRL::ComPtr<ID3D11Fence> m_pFence = nullptr;		//!< フェンスクラス
 		HANDLE m_fenceEvent = NULL;				//!< イベントハンドル
 		unsigned long long m_fenceValue = 0;	//!< フェンスカウンタ
 

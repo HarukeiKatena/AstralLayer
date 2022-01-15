@@ -79,6 +79,7 @@
 #if defined(ATLGI_DX11) || defined(ATLGI_DX12)
 #include<dxgi1_4.h>
 #pragma comment(lib, "dxgi.lib")
+#include<wrl.h>
 #endif
 
 #if defined(ATLGI_DX12)
@@ -102,7 +103,6 @@
  *******************************************************************/
 enum class ATL_GRAPHIC_INTERFACE
 {
-	UNKOWN,		//!< Žg‚Á‚Ä‚Í‚¢‚¯‚È‚¢
 	DirectX11,
 	DirectX12,
 	//OpenGL,

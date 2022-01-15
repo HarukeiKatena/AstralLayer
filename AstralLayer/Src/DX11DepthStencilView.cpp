@@ -14,9 +14,7 @@ D3D11_DSV_DIMENSION AstralLayerDirectX11::DX11DepthStencilView::ConvDimension(AT
 
 AstralLayerDirectX11::DX11DepthStencilView::~DX11DepthStencilView()
 {
-	//ƒrƒ…[‰ð•ú
-	if (m_pView != nullptr)
-		m_pView->Release();
+	
 }
 
 void AstralLayerDirectX11::DX11DepthStencilView::GetHandle(
@@ -24,7 +22,7 @@ void AstralLayerDirectX11::DX11DepthStencilView::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppOut = m_pView;
+	*ppOut = m_pView.Get();
 }
 
 void AstralLayerDirectX11::DX11DepthStencilView::Release()

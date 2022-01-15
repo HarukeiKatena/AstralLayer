@@ -34,7 +34,7 @@ void AstralLayerDirectX12::DX12Device::GetHandle(
     int Handle)
 {
     Handle;
-    *ppOut = m_pDevice;
+    *ppOut = m_pDevice.Get();
 }
 
 //==========================================================================
@@ -42,8 +42,14 @@ void AstralLayerDirectX12::DX12Device::GetHandle(
 //==========================================================================
 AstralLayerDirectX12::DX12Device::~DX12Device()
 {
-    if (m_pDevice != nullptr)
-        m_pDevice->Release();
+    /*
+    //メモリーリークチェック用
+    ID3D12DebugDevice* debugInterface;
+    if (SUCCEEDED(m_pDevice->QueryInterface(&debugInterface)))
+    {
+        debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
+        debugInterface->Release();
+    }*/
 }
 
 AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
@@ -58,7 +64,7 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
     {
         DX12ConstantBuffer* pR = new DX12ConstantBuffer();
         if (pR->CreateConstantBuffer(
-            m_pDevice,
+            m_pDevice.Get(),
             Desc,
             pSrcData) == false)
         {
@@ -72,7 +78,7 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
     {
         DX12VertexBuffer* pVB = new DX12VertexBuffer();
         if (pVB->CreateVertexBuffer(
-            m_pDevice,
+            m_pDevice.Get(),
             Desc,
             pSrcData) == false)
         {
@@ -86,7 +92,7 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
     {
         DX12IndexBuffer* pIB = new DX12IndexBuffer();
         if (pIB->CreateIndexBuffer(
-            m_pDevice,
+            m_pDevice.Get(),
             Desc,
             pSrcData) == false)
         {
@@ -100,7 +106,7 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
     {
         DX12Texture2D* pTex = new DX12Texture2D();
         if (pTex->CreateTexture(
-            m_pDevice,
+            m_pDevice.Get(),
             Desc,
             pSrcData) == false)
         {
@@ -121,7 +127,7 @@ AstralLayer::ATLIPipeLine* AstralLayerDirectX12::DX12Device::CreatePipeLine(
 {
     //パイプライン作成
     DX12PipeLine* pOut = new DX12PipeLine();
-    if (pOut->Create(m_pDevice, Desc) == false)
+    if (pOut->Create(m_pDevice.Get(), Desc) == false)
     {
         ATLAssertMessage(false, "PipeLineの作成に失敗しました");
         delete pOut;
@@ -135,7 +141,7 @@ AstralLayer::ATLIDepthStencilView* AstralLayerDirectX12::DX12Device::CreateDepth
 {
     //デプスステンシルビュー作成
     DX12DepthStencilView* pOut = new DX12DepthStencilView();
-    if (pOut->Create(m_pDevice, Desc) == false)
+    if (pOut->Create(m_pDevice.Get(), Desc) == false)
     {
         ATLAssertMessage(false, "DepthStencilViewの作成に失敗しました");
         delete pOut;
@@ -149,7 +155,7 @@ AstralLayer::ATLICommandList* AstralLayerDirectX12::DX12Device::CreateCommandLis
 {
     //コマンドリスト作成
     DX12CommandList* pOut = new DX12CommandList();
-    if (pOut->Create(m_pDevice) == false)
+    if (pOut->Create(m_pDevice.Get()) == false)
     {
         ATLAssertMessage(false, "CommandListの作成に失敗しました");
         delete pOut;
@@ -163,7 +169,7 @@ AstralLayer::ATLICommandQueue* AstralLayerDirectX12::DX12Device::CreateCommandQu
 {   
     //コマンドキュー作成
     DX12CommandQueue* pOut = new DX12CommandQueue();
-    if (pOut->Create(m_pDevice) == false)
+    if (pOut->Create(m_pDevice.Get()) == false)
     {
         ATLAssertMessage(false, "CommandQueueの作成に失敗しました");
         delete pOut;
@@ -178,7 +184,7 @@ AstralLayer::ATLISwapChain* AstralLayerDirectX12::DX12Device::CreateSwapChain(
 {
     //スワップチェイン作成
     DX12SwapChain* pOut = new DX12SwapChain();
-    if (pOut->Create(m_pDevice, Desc, pCommandQueue) == false)
+    if (pOut->Create(m_pDevice.Get(), Desc, pCommandQueue) == false)
     {
         ATLAssertMessage(false, "SwapChainの作成に失敗しました");
         delete pOut;
@@ -192,7 +198,7 @@ AstralLayer::ATLIFence* AstralLayerDirectX12::DX12Device::CreateFence()
 {
     //フェンス作成
     DX12Fence* pOut = new DX12Fence();
-    if (pOut->Create(m_pDevice) == false)
+    if (pOut->Create(m_pDevice.Get()) == false)
     {
         ATLAssertMessage(false, "フェンスの作成に失敗しました");
         delete pOut;
@@ -213,7 +219,7 @@ AstralLayer::ATLIRenderTargetView* AstralLayerDirectX12::DX12Device::CreateRende
 
     //レンダーターゲットビュー作成
     DX12RenderTargetView* pOut = new DX12RenderTargetView();
-    if (pOut->Create(m_pDevice, swap, ScreenWidth, ScreenHeight) == false)
+    if (pOut->Create(m_pDevice.Get(), swap, ScreenWidth, ScreenHeight) == false)
     {
         ATLAssertMessage(false, "レンダーターゲットビューの作成に失敗しました");
         delete pOut;
@@ -230,19 +236,77 @@ void AstralLayerDirectX12::DX12Device::Release()
 
 bool AstralLayerDirectX12::DX12Device::Create(IDXGIFactory1* pFactory)
 {
-    pFactory;//使わない
+    //アダプター準備
+    IDXGIAdapter1* pAdapter;
+    IDXGIAdapter1* vAdapters[8] = {};
+
+    unsigned int id = 0;
+
+    for (unsigned int i = 0; S_OK == pFactory->EnumAdapters1(i, &pAdapter); i++)
+    {
+        DXGI_ADAPTER_DESC1 desc{};
+        pAdapter->GetDesc1(&desc);
+
+        if (desc.Flags == DXGI_ADAPTER_FLAG_SOFTWARE)
+        {
+            pAdapter->Release();
+            continue;
+        }
+
+        for (unsigned int c = 0; c <= id; c++)
+        {
+            if (vAdapters[c] == nullptr)
+            {
+                vAdapters[c] = pAdapter;
+                break;
+            }
+
+            DXGI_ADAPTER_DESC1 check{};
+            vAdapters[c]->GetDesc1(&check);
+
+            //ビデオメモリがチェック先より大きい場合
+            if (check.DedicatedVideoMemory < desc.DedicatedVideoMemory)
+            {
+                IDXGIAdapter1* save = vAdapters[c];
+                vAdapters[c] = pAdapter;
+                vAdapters[c + 1] = save;
+                desc = check;
+            }
+        }
+
+        id++;
+
+        //IDが8を超えたらアダプターの列挙を終える
+        if (id >= 8)
+            break;
+    }
 
     //デバイス作成
-    HRESULT hr = D3D12CreateDevice(
-        nullptr,
-        D3D_FEATURE_LEVEL_11_0,
-        IID_PPV_ARGS(&m_pDevice)
-    );
-    ATLAssertMessage(SUCCEEDED(hr), "Deviceの作成に失敗しました");
-    if (FAILED(hr))
+    for (unsigned int i = 0; i < id; i++)
+    {
+        if (m_pDevice != nullptr)
+        {
+            vAdapters[i]->Release();
+            vAdapters[i] = nullptr;
+            continue;
+        }
+
+        D3D12CreateDevice(
+            vAdapters[i],
+            D3D_FEATURE_LEVEL_11_0,
+            IID_PPV_ARGS(&m_pDevice)
+        );
+        
+        vAdapters[i]->Release();
+        vAdapters[i] = nullptr;
+    }
+
+    if (m_pDevice == nullptr)
         return false;
 
     m_gi = ATL_GRAPHIC_INTERFACE::DirectX12;
+
+    
 
     return true;
 }

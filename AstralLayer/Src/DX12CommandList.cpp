@@ -66,12 +66,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE AstralLayerDirectX12::DX12CommandList::GetDSVHandle(
 
 AstralLayerDirectX12::DX12CommandList::~DX12CommandList()
 {
-    //リリース
-    if (m_pAllocator != nullptr)
-        m_pAllocator->Release();
 
-    if (m_pCommandList != nullptr)
-        m_pCommandList->Release();
 }
 
 bool AstralLayerDirectX12::DX12CommandList::Create(ID3D12Device* Device)
@@ -88,7 +83,7 @@ bool AstralLayerDirectX12::DX12CommandList::Create(ID3D12Device* Device)
     hr = Device->CreateCommandList(
         0,
         D3D12_COMMAND_LIST_TYPE_DIRECT,
-        m_pAllocator,
+        m_pAllocator.Get(),
         nullptr,
         IID_PPV_ARGS(&m_pCommandList)
     );
@@ -132,7 +127,7 @@ bool AstralLayerDirectX12::DX12CommandList::Reset(
     if (FAILED(m_pAllocator->Reset()))
         return false;
 
-    if (FAILED(m_pCommandList->Reset(m_pAllocator, pipeline)))
+    if (FAILED(m_pCommandList->Reset(m_pAllocator.Get(), pipeline)))
         return false;
 
     //ルートシグネチャーセット
@@ -256,8 +251,9 @@ void AstralLayerDirectX12::DX12CommandList::ResourceBarrier(ATL_RESOURCE_BARRIER
     if (barrier.Type == ATL_BARRIER_TYPE::RENDER_TARGET)
     {
         rb.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        reinterpret_cast<AstralRHI::RHIResource*>(barrier.pResource)->
-            GetHandle(reinterpret_cast<void**>(&rb.Transition.pResource), RTVRESOURCE_RESOURCE);
+
+        reinterpret_cast<AstralRHI::RHIRenderTargetView*>(barrier.pRenderTargetView)->
+            GetHandle(reinterpret_cast<void**>(&rb.Transition.pResource), RTV_RESOURCE + m_BackBuffer);
     }
 
     //バリアセット
@@ -365,10 +361,10 @@ void AstralLayerDirectX12::DX12CommandList::GetHandle(
     switch (Handle)
     {
     case COMMANDLIST_COMMAND:
-        *ppOut = m_pCommandList;
+        *ppOut = m_pCommandList.Get();
         break;
     case COMMANDLIST_ALLOCATOR:
-        *ppOut = m_pAllocator;
+        *ppOut = m_pAllocator.Get();
     default:
         break;
     }

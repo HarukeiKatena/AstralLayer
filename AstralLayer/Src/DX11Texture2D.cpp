@@ -4,14 +4,7 @@
 
 AstralLayerDirectX11::DX11Texture2D::~DX11Texture2D()
 {
-	if (m_pTexture != nullptr)
-		m_pTexture->Release();
 
-	if (m_pSRV != nullptr)
-		m_pSRV->Release();
-
-	if (m_pImmidiateContext != nullptr)
-		m_pImmidiateContext->Release();
 }
 
 unsigned int AstralLayerDirectX11::DX11Texture2D::SetSubResource(
@@ -19,14 +12,14 @@ unsigned int AstralLayerDirectX11::DX11Texture2D::SetSubResource(
 {
 	//マップ
 	D3D11_MAPPED_SUBRESOURCE map{};
-	if(FAILED(m_pImmidiateContext->Map(m_pTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &map)))
+	if(FAILED(m_pImmidiateContext->Map(m_pTexture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map)))
 		return UINT_MAX;
 
 	//上書き
 	memcpy(map.pData, pData, SetByteSize);
 
 	//アンマップ
-	m_pImmidiateContext->Unmap(m_pTexture, 0);
+	m_pImmidiateContext->Unmap(m_pTexture.Get(), 0);
 
 	return 0;
 }
@@ -43,14 +36,14 @@ bool AstralLayerDirectX11::DX11Texture2D::UpdateSubResource(
 
 	//マップ
 	D3D11_MAPPED_SUBRESOURCE map{};
-	if (FAILED(m_pImmidiateContext->Map(m_pTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &map)))
+	if (FAILED(m_pImmidiateContext->Map(m_pTexture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map)))
 		return false;
 
 	//上書き
 	memcpy(map.pData, pData, m_ByteSize);
 
 	//アンマップ
-	m_pImmidiateContext->Unmap(m_pTexture, 0);
+	m_pImmidiateContext->Unmap(m_pTexture.Get(), 0);
 
 	return true;
 }
@@ -60,7 +53,7 @@ void AstralLayerDirectX11::DX11Texture2D::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppOut = m_pSRV;
+	*ppOut = m_pSRV.Get();
 }
 
 void AstralLayerDirectX11::DX11Texture2D::Release()
@@ -103,7 +96,7 @@ bool AstralLayerDirectX11::DX11Texture2D::CreateTexture2D(
 	if (pSrcData == nullptr)
 	{
 		//作成
-		HRESULT hr = pDevice->CreateTexture2D(&desc, nullptr, &m_pTexture);
+		HRESULT hr = pDevice->CreateTexture2D(&desc, nullptr, m_pTexture.GetAddressOf());
 		if (FAILED(hr))
 			return false;
 	}
@@ -116,7 +109,7 @@ bool AstralLayerDirectX11::DX11Texture2D::CreateTexture2D(
 		data.SysMemSlicePitch = data.SysMemPitch * Desc.Height;
 
 		//作成
-		HRESULT hr = pDevice->CreateTexture2D(&desc, &data, &m_pTexture);
+		HRESULT hr = pDevice->CreateTexture2D(&desc, &data, m_pTexture.GetAddressOf());
 		if (FAILED(hr))
 			return false;
 	}
@@ -128,7 +121,7 @@ bool AstralLayerDirectX11::DX11Texture2D::CreateTexture2D(
 	srvdesc.Texture2D.MipLevels = desc.MipLevels;
 	srvdesc.Texture2D.MostDetailedMip = 0;
 	
-	if (FAILED(pDevice->CreateShaderResourceView(m_pTexture, &srvdesc, &m_pSRV)))
+	if (FAILED(pDevice->CreateShaderResourceView(m_pTexture.Get(), &srvdesc, m_pSRV.GetAddressOf())))
 	{
 		this->~DX11Texture2D();
 		return false;

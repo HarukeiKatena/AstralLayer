@@ -3,8 +3,7 @@
 
 AstralLayerDirectX11::DX11RTVResource::~DX11RTVResource()
 {
-	if(m_pBuffer != nullptr)
-		m_pBuffer->Release();
+
 }
 
 unsigned int AstralLayerDirectX11::DX11RTVResource::SetSubResource(
@@ -37,7 +36,7 @@ void AstralLayerDirectX11::DX11RTVResource::Release()
 void AstralLayerDirectX11::DX11RTVResource::GetHandle(void** ppOut, int Handle)
 {
 	Handle;
-	*ppOut = m_pBuffer;
+	*ppOut = m_pBuffer.Get();
 }
 
 void AstralLayerDirectX11::DX11RTVResource::SetBuffer(ID3D11Resource* pBuffer)

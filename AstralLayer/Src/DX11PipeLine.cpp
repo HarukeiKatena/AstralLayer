@@ -219,7 +219,7 @@ bool AstralLayerDirectX11::DX11PipeLine::CreateVertexShader(
 		input.NumElements,
 		vs.pShaderBytecode,
 		vs.BytecodeLength,
-		&m_State.InputLayout);
+		m_State.InputLayout.GetAddressOf());
 	delete[] element;
 	if (FAILED(hr))
 	{
@@ -232,7 +232,7 @@ bool AstralLayerDirectX11::DX11PipeLine::CreateVertexShader(
 
 bool AstralLayerDirectX11::DX11PipeLine::CreatePixelShader(ID3D11Device* pDevice, ATL_SHADER_BYTECODE& ps)
 {
-	HRESULT hr = pDevice->CreatePixelShader(ps.pShaderBytecode, ps.BytecodeLength, nullptr, &m_State.PixelShader);
+	HRESULT hr = pDevice->CreatePixelShader(ps.pShaderBytecode, ps.BytecodeLength, nullptr, m_State.PixelShader.GetAddressOf());
 	if (FAILED(hr))
 	{
 		this->~DX11PipeLine();
@@ -257,7 +257,7 @@ bool AstralLayerDirectX11::DX11PipeLine::CreateBlendState(ID3D11Device* pDevice,
 		BlendState.RenderTarget[i].BlendOpAlpha = CalcBlendOp(blend.RenderTarget[i].BlendOpAlpha);
 		BlendState.RenderTarget[i].RenderTargetWriteMask = static_cast<unsigned char>(blend.RenderTarget[i].RenderTargetWriteMask);
 	}
-	HRESULT hr = pDevice->CreateBlendState(&BlendState, &m_State.BlendState);
+	HRESULT hr = pDevice->CreateBlendState(&BlendState, m_State.BlendState.GetAddressOf());
 	if (FAILED(hr))
 	{
 		this->~DX11PipeLine();
@@ -280,7 +280,7 @@ bool AstralLayerDirectX11::DX11PipeLine::CreateRasterizer(ID3D11Device* pDevice,
 	Rasterizer.MultisampleEnable = rasterizer.MultisampleEnable;
 	Rasterizer.AntialiasedLineEnable = rasterizer.AntialiasedLineEnable;
 
-	HRESULT hr = pDevice->CreateRasterizerState(&Rasterizer, &m_State.Rasterizer);
+	HRESULT hr = pDevice->CreateRasterizerState(&Rasterizer, m_State.Rasterizer.GetAddressOf());
 	if (FAILED(hr))
 	{
 		this->~DX11PipeLine();
@@ -309,7 +309,7 @@ bool AstralLayerDirectX11::DX11PipeLine::CreateDepthStencilDesc(
 	DepthStencil.BackFace.StencilDepthFailOp = CalcStencilOp(ds.FrontFace.StencilDepthFailOp);
 	DepthStencil.BackFace.StencilPassOp = CalcStencilOp(ds.FrontFace.StencilPassOp);
 	DepthStencil.BackFace.StencilFunc = CalcFunc(ds.FrontFace.StencilFunc);
-	HRESULT hr = pDevice->CreateDepthStencilState(&DepthStencil, &m_State.DepthStencil);
+	HRESULT hr = pDevice->CreateDepthStencilState(&DepthStencil, m_State.DepthStencil.GetAddressOf());
 	if (FAILED(hr))
 	{
 		this->~DX11PipeLine();
@@ -367,33 +367,8 @@ bool AstralLayerDirectX11::DX11PipeLine::CreateSampler(ID3D11Device* pDevice, AT
 
 AstralLayerDirectX11::DX11PipeLine::~DX11PipeLine()
 {
-	//たくさん解放
-	if (m_State.InputLayout != nullptr)
-		m_State.InputLayout->Release();
-	if (m_State.VertexShader != nullptr)
-		m_State.VertexShader->Release();
-	if (m_State.PixelShader != nullptr)
-		m_State.PixelShader->Release();
-	if (m_State.BlendState != nullptr)
-		m_State.BlendState->Release();
-	if (m_State.Rasterizer != nullptr)
-		m_State.Rasterizer->Release();
-	if (m_State.DepthStencil != nullptr)
-		m_State.DepthStencil->Release();
-
 	//パラメーター解放
 	delete[] m_State.Parametor.pParameters;
-
-	//サンプラーがNULLの場合終わる
-	if (m_State.Sampler.pSampler == nullptr)
-		return;
-
-	//サンプラーステートを解放
-	for (unsigned int i = 0; i < m_State.Sampler.NumSampler; i++)
-	{
-		if (m_State.Sampler.pSampler[i].pSamplerState != nullptr)
-			m_State.Sampler.pSampler[i].pSamplerState->Release();
-	}
 
 	//サンプラー解放
 	delete[] m_State.Sampler.pSampler;

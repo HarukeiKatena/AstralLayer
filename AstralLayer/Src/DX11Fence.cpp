@@ -3,9 +3,7 @@
 
 AstralLayerDirectX11::DX11Fence::~DX11Fence()
 {
-	//デバイス解放
-	if (m_pFence != nullptr)
-		m_pFence->Release();
+	
 }
 
 void AstralLayerDirectX11::DX11Fence::GetHandle(
@@ -13,7 +11,7 @@ void AstralLayerDirectX11::DX11Fence::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppResource = m_pFence;
+	*ppResource = m_pFence.Get();
 }
 
 void AstralLayerDirectX11::DX11Fence::WaitDrawDone(AstralLayer::ATLICommandQueue* pCommandQueue, AstralLayer::ATLISwapChain* pSwapChain)
@@ -30,7 +28,7 @@ void AstralLayerDirectX11::DX11Fence::WaitDrawDone(AstralLayer::ATLICommandQueue
 
 	//現在のFence値がコマンド終了後にFenceに書き込まれるようにする
 	unsigned long long fvalue = m_fenceValue;
-	cq->Signal(m_pFence, fvalue);
+	cq->Signal(m_pFence.Get(), fvalue);
 	m_fenceValue++;
 
 	//コマンドキューが終了していないことを確認する

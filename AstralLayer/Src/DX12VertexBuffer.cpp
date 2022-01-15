@@ -22,7 +22,7 @@ bool AstralLayerDirectX12::DX12VertexBuffer::CreateVertexBuffer(
     m_pView = new D3D12_VERTEX_BUFFER_VIEW[m_ObjectSize];
     for (unsigned int i = 0; i < m_ObjectSize; i++)
     {
-        m_pView[i].BufferLocation = m_pResourceArray[i].GetGPUVirtualAddress();
+        m_pView[i].BufferLocation = m_pResourceArray->GetGPUVirtualAddress();
         m_pView[i].SizeInBytes = m_StructureSize * m_Width;
         m_pView[i].StrideInBytes = m_StructureSize;
     }
@@ -40,7 +40,7 @@ void AstralLayerDirectX12::DX12VertexBuffer::GetHandle(
         *ppOut = &m_pView[Handle];
         break;
     case RESOURCE_DATA:
-        *ppOut = &m_pResourceArray;
+        *ppOut = m_pResourceArray.Get();
         break;
     default:
         break;

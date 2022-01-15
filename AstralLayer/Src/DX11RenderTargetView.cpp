@@ -3,9 +3,7 @@
 
 AstralLayerDirectX11::DX11RenderTargetView::~DX11RenderTargetView()
 {
-	//‰ð•ú
-	if (m_pRenderTarget != nullptr)
-		m_pRenderTarget->Release();
+	
 }
 
 void AstralLayerDirectX11::DX11RenderTargetView::GetHandle(
@@ -13,7 +11,7 @@ void AstralLayerDirectX11::DX11RenderTargetView::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppOut = m_pRenderTarget;
+	*ppOut = m_pRenderTarget.Get();
 }
 
 AstralLayer::ATLIResource* AstralLayerDirectX11::DX11RenderTargetView::GetResource(

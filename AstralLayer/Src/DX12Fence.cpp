@@ -3,8 +3,7 @@
 
 AstralLayerDirectX12::DX12Fence::~DX12Fence()
 {
-	if (m_pFence != nullptr)
-		m_pFence->Release();
+
 }
 
 void AstralLayerDirectX12::DX12Fence::GetHandle(
@@ -31,7 +30,7 @@ void AstralLayerDirectX12::DX12Fence::WaitDrawDone(
 
 	//現在のFence値がコマンド終了後にFenceに書き込まれるようにする
 	unsigned long long fvalue = m_fenceValue;
-	cq->Signal(m_pFence, fvalue);
+	cq->Signal(m_pFence.Get(), fvalue);
 	m_fenceValue++;
 
 	//コマンドキューが終了していないことを確認する

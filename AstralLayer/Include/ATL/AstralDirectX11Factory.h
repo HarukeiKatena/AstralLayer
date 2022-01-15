@@ -13,6 +13,8 @@ namespace AstralLayerFactory
 	class ATLDX11Factory : public ATLIFactory
 	{
 	public:
+		ATLDX11Factory();
+
 		/****************************************************************//**
 		 *  @see AstralLayerFactory::ATLIFactory::CreateDevice()
 		 *******************************************************************/

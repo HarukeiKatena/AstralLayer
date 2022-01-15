@@ -15,8 +15,8 @@ constexpr unsigned int AstralLayerDirectX12::DX12Texture2D::CallDepthPitch()
 
 AstralLayerDirectX12::DX12Texture2D::~DX12Texture2D()
 {
-	if (m_pTexture != nullptr)
-		m_pTexture->Release();
+    m_pTexture.Reset();
+    m_pHeap.Reset();
 }
 
 unsigned int AstralLayerDirectX12::DX12Texture2D::SetSubResource(
@@ -67,10 +67,10 @@ void AstralLayerDirectX12::DX12Texture2D::GetHandle(
     switch (Handle)
     {
     case TEXTURE2D_HEAP:
-        *ppOut = m_pHeap;
+        *ppOut = m_pHeap.Get();
         break;
     case TEXTURE2D_TEXTURE:
-        *ppOut = m_pTexture;
+        *ppOut = m_pTexture.Get();
         break;
     default:
         break;
@@ -170,7 +170,7 @@ bool AstralLayerDirectX12::DX12Texture2D::CreateTexture(
     srvdesc.Texture2D.MipLevels = 1;
     srvdesc.Texture2D.MostDetailedMip = 0;
     D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pHeap->GetCPUDescriptorHandleForHeapStart();
-    Device->CreateShaderResourceView(m_pTexture, &srvdesc, handle);
+    Device->CreateShaderResourceView(m_pTexture.Get(), &srvdesc, handle);
 
     return true;
 }

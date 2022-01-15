@@ -26,7 +26,6 @@ bool AstralLayerDirectX12::DX12IndexBuffer::CreateIndexBuffer(
         m_pView[i].SizeInBytes = m_StructureSize * m_Width;
         m_pView[i].Format = DXGI_FORMAT_R32_UINT;
     }
-
     return true;
 }
 
@@ -40,7 +39,7 @@ void AstralLayerDirectX12::DX12IndexBuffer::GetHandle(
         *ppOut = &m_pView[Handle];
         break;
     case RESOURCE_DATA:
-        *ppOut = &m_pResourceArray;
+        *ppOut = m_pResourceArray.Get();
         break;
     default:
         break;

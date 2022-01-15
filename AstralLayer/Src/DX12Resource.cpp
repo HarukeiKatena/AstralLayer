@@ -15,8 +15,8 @@ AstralLayerDirectX12::DX12Resource::~DX12Resource()
         if (m_pResourceArray != nullptr)
             m_pResourceArray->Unmap(0, nullptr);
     }
-
-    m_pResourceArray->Release();
+    
+    m_pResourceArray.Reset();
 }
 
 unsigned int AstralLayerDirectX12::DX12Resource::SetSubResource(
@@ -120,15 +120,20 @@ bool AstralLayerDirectX12::DX12Resource::CreateResource(
     rdesc.Height = 1;
 
     //幅を事前に計算しておく
-    rdesc.Width =
-        static_cast<unsigned long long>(m_StructureSize)*
-        static_cast<unsigned long long>(m_Width)*
-        static_cast<unsigned long long>(m_ObjectSize);
-
     if (Desc.Flag == ATL_RESOURCE_FLAG::CONSTANTBUFFER)
     {
         //定数バッファーはアライメントする
-        rdesc.Width = CalcAlignment(static_cast<unsigned long>(rdesc.Width));
+        rdesc.Width =
+            CalcAlignment(static_cast<unsigned long>(m_StructureSize)) *
+            static_cast<unsigned long long>(m_Width) *
+            static_cast<unsigned long long>(m_ObjectSize);
+    }
+    else
+    {
+        rdesc.Width =
+            static_cast<unsigned long long>(m_StructureSize) *
+            static_cast<unsigned long long>(m_Width) *
+            static_cast<unsigned long long>(m_ObjectSize);
     }
 
     //リソース作成
@@ -152,7 +157,7 @@ bool AstralLayerDirectX12::DX12Resource::CreateResource(
         for (unsigned int o = 0; o < m_ObjectSize; o++)
         {
             //すべてのオブジェクトを初期状態に書き込む
-            this->UpdateSubResource(o, 0, pSrcData, Desc.ByteStructure * Desc.Width * Desc.Height);
+            this->SetSubResource(pSrcData, Desc.ByteStructure * Desc.Width * Desc.Height);
         }
     }
 

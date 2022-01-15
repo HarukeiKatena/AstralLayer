@@ -1,12 +1,16 @@
 #include"../Include/ATL/AstralDirectX12Factory.h"
 #include"../Include/AstralDebug.h"
 
-void AstralLayerDirectX12::DX12RTVResource::SetResource(
-    ID3D12Resource* pResource, 
-    ID3D12DescriptorHeap* pHeap)
+AstralLayerDirectX12::DX12RTVResource::~DX12RTVResource()
 {
-    m_pResource = pResource;
-    m_pHeap = pHeap;
+    for (unsigned int i = 0; i < m_ArraySize; i++)
+    {
+        m_pRenderTargets[i].Reset();
+    }
+
+    m_pHeap.Reset();
+
+    delete[] m_pRenderTargets;
 }
 
 unsigned int AstralLayerDirectX12::DX12RTVResource::SetSubResource(
@@ -33,16 +37,7 @@ void AstralLayerDirectX12::DX12RTVResource::GetHandle(
     void** ppOut, 
     int Handle)
 {
-    switch (Handle)
-    {
-    case RTVRESOURCE_HEAP:
-        *ppOut = m_pHeap;
-        break;
-    case RTVRESOURCE_RESOURCE:
-        *ppOut = m_pResource;
-    default:
-        break;
-    }
+    m_pParentRTV->GetHandle(ppOut, Handle);
 }
 
 void AstralLayerDirectX12::DX12RTVResource::Release()

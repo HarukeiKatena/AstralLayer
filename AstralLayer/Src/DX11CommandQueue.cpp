@@ -3,9 +3,8 @@
 
 AstralLayerDirectX11::DX11CommandQueue::~DX11CommandQueue()
 {
-	//イミディエイトコンテキストリリース
-	if (m_pImmidiateContext != nullptr)
-		m_pImmidiateContext->Release();
+	m_pImmidiateContext->ClearState();
+	m_pImmidiateContext->Flush();
 }
 
 void AstralLayerDirectX11::DX11CommandQueue::GetHandle(
@@ -13,7 +12,7 @@ void AstralLayerDirectX11::DX11CommandQueue::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppResource = m_pImmidiateContext;
+	*ppResource = m_pImmidiateContext.Get();
 }
 
 bool AstralLayerDirectX11::DX11CommandQueue::ExecuteCommandLists(
@@ -52,7 +51,9 @@ bool AstralLayerDirectX11::DX11CommandQueue::Create(
 		return false;
 
 	//DeviceContext4にキャスト
-	m_pImmidiateContext = reinterpret_cast<ID3D11DeviceContext4*>(dcon);
+	dcon->QueryInterface(IID_PPV_ARGS(&m_pImmidiateContext));
+
+	dcon->Release();
 
 	return true;
 }

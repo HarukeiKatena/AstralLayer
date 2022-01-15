@@ -17,11 +17,8 @@ D3D12_DSV_DIMENSION AstralLayerDirectX12::DX12DepthStencilView::ConvDimension(AT
 //==========================================================================
 AstralLayerDirectX12::DX12DepthStencilView::~DX12DepthStencilView()
 {
-	if (m_pResource != nullptr)
-		m_pResource->Release();
-
-	if (m_pdsvHeap != nullptr)
-		m_pdsvHeap->Release();
+    m_pdsvHeap.Reset();
+    m_pResource.Reset();
 }
 
 void AstralLayerDirectX12::DX12DepthStencilView::GetHandle(
@@ -29,7 +26,7 @@ void AstralLayerDirectX12::DX12DepthStencilView::GetHandle(
     int Handle)
 {
     Handle;
-    *ppOut = m_pdsvHeap;
+    *ppOut = m_pdsvHeap.Get();
 }
 
 void AstralLayerDirectX12::DX12DepthStencilView::Release()
@@ -105,7 +102,7 @@ bool AstralLayerDirectX12::DX12DepthStencilView::Create(
 
         //ヒープにセット
         pDevice->CreateDepthStencilView(
-            m_pResource,
+            m_pResource.Get(),
             &dsvdesc,
             m_pdsvHeap->GetCPUDescriptorHandleForHeapStart()
         );

@@ -3,8 +3,7 @@
 
 AstralLayerDirectX11::DX11SwapChain::~DX11SwapChain()
 {
-	if (m_pSwapChain != nullptr)
-		m_pSwapChain->Release();
+
 }
 
 bool AstralLayerDirectX11::DX11SwapChain::Create(
@@ -24,19 +23,23 @@ bool AstralLayerDirectX11::DX11SwapChain::Create(
 	sample.Quality = sample.Quality < Desc.Sample.Quality ? sample.Quality : Desc.Sample.Quality;
 
 	//デスク作成
-	DXGI_SWAP_CHAIN_DESC desc{};
-	desc.BufferCount = 1;
-	desc.BufferDesc.Width = Desc.Width;
-	desc.BufferDesc.Height = Desc.Height;
-	desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.BufferDesc.RefreshRate.Numerator = 60;
-	desc.BufferDesc.RefreshRate.Denominator = 1;
+	DXGI_SWAP_CHAIN_DESC1 desc{};
+	desc.BufferCount = 2;
+	desc.Width = Desc.Width;
+	desc.Height = Desc.Height;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Stereo = false;
 	desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	desc.OutputWindow = Desc.hWnd;
 	desc.SampleDesc = sample;
-	desc.Windowed = Desc.Windowed;
-	desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	desc.Scaling = DXGI_SCALING_STRETCH;
+	desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	desc.Flags = 0;
+
+	DXGI_SWAP_CHAIN_FULLSCREEN_DESC full{};
+	full.RefreshRate.Denominator = 1;
+	full.RefreshRate.Numerator = 60;
+	full.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	full.Windowed = Desc.Windowed;
 
 	//ファクトリー
 	IDXGIFactory4* pFactory = nullptr;
@@ -46,10 +49,13 @@ bool AstralLayerDirectX11::DX11SwapChain::Create(
 		return false;
 	
 	//スワップチェイン
-	IDXGISwapChain* pCreate = nullptr;
-	hr = pFactory->CreateSwapChain(
+	IDXGISwapChain1* pCreate = nullptr;
+	hr = pFactory->CreateSwapChainForHwnd(
 		pDevice,
+		Desc.hWnd,
 		&desc,
+		&full,
+		nullptr,
 		&pCreate
 	);
 	pFactory->Release();
@@ -58,7 +64,9 @@ bool AstralLayerDirectX11::DX11SwapChain::Create(
 		return false;
 
 	//スワップチェインをセット
-	m_pSwapChain = reinterpret_cast<IDXGISwapChain3*>(pCreate);
+	pCreate->QueryInterface(IID_PPV_ARGS(&m_pSwapChain));
+
+	pCreate->Release();
 
 	return true;
 }
@@ -78,5 +86,5 @@ void AstralLayerDirectX11::DX11SwapChain::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppResource = m_pSwapChain;
+	*ppResource = m_pSwapChain.Get();
 }

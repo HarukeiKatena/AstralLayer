@@ -59,11 +59,9 @@ D3D11_PRIMITIVE_TOPOLOGY AstralLayerDirectX11::DX11CommandList::ConvToporogy(
 
 AstralLayerDirectX11::DX11CommandList::~DX11CommandList()
 {
-	//デファードコンテキストリリース
-	if (m_pDeferredContext != nullptr)
-		m_pDeferredContext->Release();
+	m_pDeferredContext->ClearState();
+	m_pDeferredContext->Flush();
 
-	//コマンドリストリリース
 	if (m_pCommandList != nullptr)
 		m_pCommandList->Release();
 }
@@ -100,19 +98,19 @@ bool AstralLayerDirectX11::DX11CommandList::Reset(
 		GetHandle(reinterpret_cast<void**>(&pipeline), PIPELINE_PIPELINE);
 
 	//シェーダー
-	m_pDeferredContext->IASetInputLayout(pipeline->InputLayout);
-	m_pDeferredContext->VSSetShader(pipeline->VertexShader, nullptr, 0);
-	m_pDeferredContext->PSSetShader(pipeline->PixelShader, nullptr, 0);
+	m_pDeferredContext->IASetInputLayout(pipeline->InputLayout.Get());
+	m_pDeferredContext->VSSetShader(pipeline->VertexShader.Get(), nullptr, 0);
+	m_pDeferredContext->PSSetShader(pipeline->PixelShader.Get(), nullptr, 0);
 
 	//ブレンドステート
 	float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	m_pDeferredContext->OMSetBlendState(pipeline->BlendState, BlendFactor, 0xffffffff);
+	m_pDeferredContext->OMSetBlendState(pipeline->BlendState.Get(), BlendFactor, 0xffffffff);
 
 	//ラスタライザー
-	m_pDeferredContext->RSSetState(pipeline->Rasterizer);
+	m_pDeferredContext->RSSetState(pipeline->Rasterizer.Get());
 
 	//デプスステンシルステート
-	m_pDeferredContext->OMSetDepthStencilState(pipeline->DepthStencil, 0);
+	m_pDeferredContext->OMSetDepthStencilState(pipeline->DepthStencil.Get(), 0);
 
 	//ルートパラメーター
 	m_pRootDesc = &pipeline->Parametor;
@@ -369,7 +367,7 @@ void AstralLayerDirectX11::DX11CommandList::GetHandle(
 	switch (Handle)
 	{
 	case COMMANDLIST_CONTEXT:
-		*pResource = m_pDeferredContext;
+		*pResource = m_pDeferredContext.Get();
 		break;
 	case COMMANDLIST_COMMAND:
 		*pResource = m_pCommandList;

@@ -6,8 +6,7 @@
 //==========================================================================
 AstralLayerDirectX12::DX12SwapChain::~DX12SwapChain()
 {
-	if (m_pSwapChain != nullptr)
-		m_pSwapChain->Release();
+	
 }
 
 bool AstralLayerDirectX12::DX12SwapChain::Create(
@@ -48,8 +47,8 @@ bool AstralLayerDirectX12::DX12SwapChain::Create(
 	desc.Flags = 0;
 	
 	DXGI_SWAP_CHAIN_FULLSCREEN_DESC full{};
-	full.RefreshRate.Denominator = 60;
-	full.RefreshRate.Numerator = 0;
+	full.RefreshRate.Denominator = 1;
+	full.RefreshRate.Numerator = 60;
 	full.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	full.Windowed = Desc.Windowed;
 
@@ -75,7 +74,10 @@ bool AstralLayerDirectX12::DX12SwapChain::Create(
 		return false;
 
 	//スワップチェインセット
-	m_pSwapChain = reinterpret_cast<IDXGISwapChain3*>(pCreate);
+	//m_pSwapChain = reinterpret_cast<IDXGISwapChain3*>(pCreate);
+	pCreate->QueryInterface(IID_PPV_ARGS(&m_pSwapChain));
+
+	pCreate->Release();
 
 	return true;
 }
@@ -88,6 +90,7 @@ void AstralLayerDirectX12::DX12SwapChain::Present(unsigned int SyncInterval)
 
 void AstralLayerDirectX12::DX12SwapChain::Release()
 {
+	m_pSwapChain.Reset();
 	delete this;
 }
 
@@ -96,5 +99,5 @@ void AstralLayerDirectX12::DX12SwapChain::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppOut = m_pSwapChain;
+	*ppOut = m_pSwapChain.Get();
 }

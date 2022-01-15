@@ -21,33 +21,15 @@ D3D11_BIND_FLAG AstralLayerDirectX11::DX11Resource::ConvBindFlag(ATL_RESOURCE_FL
 
 AstralLayerDirectX11::DX11Resource::~DX11Resource()
 {
-	if (m_pBufferArray == nullptr)//配列が存在するか
-	{
-		if (m_pImmidiateContext != nullptr)
-			m_pImmidiateContext->Release();
-		return;
-	}
-
 	//Mapしている場合
 	if (m_Type == ATL_RESOURCE_TYPE::UPLOAD || m_Type == ATL_RESOURCE_TYPE::READBACK)
 	{
 		for (unsigned int i = 0; i < m_ObjectSize; i++)//く～るく～る
 		{
 			if (m_pBufferArray[i] != nullptr)//リソースがあるか
-				m_pImmidiateContext->Unmap(m_pBufferArray[i], 0);//アンマップ
+				m_pImmidiateContext->Unmap(m_pBufferArray[i].Get(), 0);//アンマップ
 		}
 	}
-
-	//解放処理
-	for (unsigned int i = 0; i < m_ObjectSize; i++)
-	{
-		if (m_pBufferArray[i] != nullptr)
-			m_pBufferArray[i]->Release();
-	}
-
-	//解放処理
-	if (m_pImmidiateContext != nullptr)
-		m_pImmidiateContext->Release();
 
 	delete[] m_pBufferArray;
 }
@@ -58,14 +40,14 @@ unsigned int AstralLayerDirectX11::DX11Resource::SetSubResource(
 {
 	//マップ
 	D3D11_MAPPED_SUBRESOURCE ms{};
-	if (FAILED(m_pImmidiateContext->Map(m_pBufferArray[m_UseIndex], 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &ms)))
+	if (FAILED(m_pImmidiateContext->Map(m_pBufferArray[m_UseIndex].Get(), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &ms)))
 		return UINT_MAX;
 
 	//上書き
 	memcpy(ms.pData, pData, SetByteSize);
 
 	//アンマップ
-	m_pImmidiateContext->Unmap(m_pBufferArray[m_UseIndex], 0);
+	m_pImmidiateContext->Unmap(m_pBufferArray[m_UseIndex].Get(), 0);
 
 	//インデックス保持
 	unsigned int index = m_UseIndex;
@@ -88,7 +70,7 @@ bool AstralLayerDirectX11::DX11Resource::UpdateSubResource(
 
 	//マップ
 	D3D11_MAPPED_SUBRESOURCE ms{};
-	if (FAILED(m_pImmidiateContext->Map(m_pBufferArray[SubResourceID], 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &ms)))
+	if (FAILED(m_pImmidiateContext->Map(m_pBufferArray[SubResourceID].Get(), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &ms)))
 		return false;
 
 	//ポインタ受け取る
@@ -98,7 +80,7 @@ bool AstralLayerDirectX11::DX11Resource::UpdateSubResource(
 	memcpy(&data[MoveByte], pData, UpdateByteSize);
 
 	//アンマップ
-	m_pImmidiateContext->Unmap(m_pBufferArray[SubResourceID], 0);
+	m_pImmidiateContext->Unmap(m_pBufferArray[SubResourceID].Get(), 0);
 
 	return true;
 }
@@ -117,7 +99,7 @@ void AstralLayerDirectX11::DX11Resource::GetHandle(
 	}
 	else if(Handle >= RESOURCE_BUFFER)
 	{
-		*ppOut = m_pBufferArray[Handle];//先頭アドレス
+		*ppOut = m_pBufferArray[Handle].Get();//先頭アドレス
 	}
 }
 
@@ -147,7 +129,7 @@ bool AstralLayerDirectX11::DX11Resource::CreateResource(
 	m_StructureSize = Desc.ByteStructure;
 	m_Width = Desc.Width;
 	m_ObjectSize = Desc.NumObject;
-	m_pBufferArray = new ID3D11Buffer*[m_ObjectSize];
+	m_pBufferArray = new Microsoft::WRL::ComPtr<ID3D11Buffer>[m_ObjectSize];
 	m_Type = Desc.Type;
 	m_Flag = Desc.Flag;
 	m_Format = ConvDXGIFormat(Desc.Format);
