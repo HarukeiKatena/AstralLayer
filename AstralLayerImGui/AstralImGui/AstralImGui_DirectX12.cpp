@@ -1,12 +1,18 @@
 #include"AstralImGui.h"
 
+#pragma warning(push)
+#pragma warning(disable:26451)
+#pragma warning(disable:6386)
+#pragma warning(disable:4244)
 #include"../ImGUI/imgui_impl_dx12.h"
+#pragma warning(pop)
 
 AstralImGui::DX12ImGui::~DX12ImGui()
 {
 	ImGui_ImplDX12_Shutdown();
 	if (m_prtvHeap != nullptr)
 		m_prtvHeap->Release();
+	m_prtvHeap = nullptr;
 }
 
 bool AstralImGui::DX12ImGui::Create(
@@ -104,6 +110,8 @@ AstralLayer::ATLICommandList* AstralImGui::DX12ImGui::End(
 	list->ResourceBarrier(1, &barrier);
 
 	list->Close();
+
+	device->Release();
 
 	return m_pCommandList;
 }

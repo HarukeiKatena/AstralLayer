@@ -26,6 +26,7 @@ void AstralLayerDirectX12::DX12RenderTargetView::GetHandle(
 AstralLayer::ATLIResource* AstralLayerDirectX12::DX12RenderTargetView::GetResource(
     AstralLayer::ATLIFence* pFence)
 {
+    pFence;
     return m_pRTV;
 }
 

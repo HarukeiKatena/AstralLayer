@@ -5,7 +5,12 @@
 
 
 #if	defined(ASTRAL_WINDOWS)
+#pragma warning(push)
+#pragma warning(disable:26451)
+#pragma warning(disable:6386)
+#pragma warning(disable:4244)
 #include"ImGUI/imgui_impl_win32.h"
+#pragma warning(pop)
 #endif
 
 static AstralImGui::ATLIImGui* g_pAstralImGui = nullptr;

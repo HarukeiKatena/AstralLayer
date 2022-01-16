@@ -10,7 +10,7 @@ void Renderer::Init(HWND hwnd)
 {
 	//ファクトリー
 	AstralLayerFactory::ATLIFactory* factory = 
-		AstralLayerFactory::CreateAstralFactory(ATL_GRAPHIC_INTERFACE::DirectX11);//ここの引数で切り替える
+		AstralLayerFactory::CreateAstralFactory(ATL_GRAPHIC_INTERFACE::DirectX12);//ここの引数で切り替える
 
 	//デバイス
 	m_pDevice = factory->CreateDevice();
@@ -271,9 +271,6 @@ void Renderer::Draw(void)
 	//描画処理が終わってない場合は待つ
 	m_pFence->WaitDrawDone(m_pCommandQueue, m_pSwapChain);
 
-	//rtvのリソース取得
-	ATLIResource* pRTV = m_pRenderTargetView->GetResource(m_pFence);
-
 	//画面クリア
 	{
 		//コマンドリセット
@@ -282,7 +279,7 @@ void Renderer::Draw(void)
 		//バリア
 		ATL_RESOURCE_BARRIER barrier{};
 		barrier.Type = ATL_BARRIER_TYPE::RENDER_TARGET;
-		barrier.pResource = pRTV;
+		barrier.pRenderTargetView = m_pRenderTargetView;
 		barrier.StateBefore = ATL_RESOURCE_STATE::PRESENT;
 		barrier.StateAfter = ATL_RESOURCE_STATE::RENDER_TARGET;
 		m_pClearCommandList->ResourceBarrier(barrier);
@@ -309,7 +306,7 @@ void Renderer::Draw(void)
 	//バリア
 	ATL_RESOURCE_BARRIER barrier{};
 	barrier.Type = ATL_BARRIER_TYPE::RENDER_TARGET;
-	barrier.pResource = pRTV;
+	barrier.pRenderTargetView = m_pRenderTargetView;
 	barrier.StateBefore = ATL_RESOURCE_STATE::PRESENT;
 	barrier.StateAfter = ATL_RESOURCE_STATE::RENDER_TARGET;
 	m_pCommandList->ResourceBarrier(barrier);
@@ -374,9 +371,6 @@ void Renderer::Draw(void)
 
 	//描画
 	m_pSwapChain->Present(1);
-
-	//RTV使い終わったので解放
-	pRTV->Release();
 }
 
 void Renderer::Uninit(void)
@@ -385,12 +379,13 @@ void Renderer::Uninit(void)
 	m_pFence->WaitDrawDone(m_pCommandQueue, m_pSwapChain);
 
 	AstralImGui::ImGuiRelease();
-
+	
 	m_pTexture->Release();
 	m_pWorldBuffer->Release();
 	m_pViewProjection->Release();
 	m_pVertexBuffer->Release();
 	m_pIndexBuffer->Release();
+	m_pClearCommandList->Release();
 	m_pDepthStencilView->Release();
 	m_pFence->Release();
 	m_pPipeLine->Release();

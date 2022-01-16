@@ -2,8 +2,12 @@
  * AstralLayer用のImGui管理ライブラリ
  *******************************************************************/
 #pragma once
+#pragma warning(push)
+#pragma warning(disable:26451)
+#pragma warning(disable:6386)
+#pragma warning(disable:4244)
 #include"ImGUI/imgui.h"
-
+#pragma warning(pop)
 /// @cond
 /// 前方宣言
 namespace AstralLayer

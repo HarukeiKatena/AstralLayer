@@ -29,12 +29,13 @@ private:
 	ATLISwapChain* m_pSwapChain = nullptr;
 	ATLIRenderTargetView* m_pRenderTargetView = nullptr;
 	ATLICommandQueue* m_pCommandQueue = nullptr;
-	ATLICommandList* m_pCommandList = nullptr;
 	ATLIPipeLine* m_pPipeLine = nullptr;
 	ATLIFence* m_pFence = nullptr;
 	ATLIDepthStencilView* m_pDepthStencilView = nullptr;
 
 	ATLICommandList* m_pClearCommandList = nullptr;
+	ATLICommandList* m_pCommandList = nullptr;
+
 	
 	ATLIResource* m_pWorldBuffer = nullptr;
 	ATLIResource* m_pViewProjection = nullptr;

@@ -80,7 +80,7 @@ namespace AstralImGui
 		ID3D12DescriptorHeap* m_prtvHeap = nullptr;
 
 	public:
-		~DX12ImGui();
+		virtual ~DX12ImGui();
 
 		/****************************************************************//**
 		 * @see AstralImGui::ATLIImGui::Create()

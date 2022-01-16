@@ -13,8 +13,8 @@ cbuffer ProjectionBuffer : register(b2)
 
 struct VS_IN
 {
-	float3 Position		: POSITION0;
-	float3 Normal		: NORMAL0;
+	float4 Position		: POSITION0;
+	float4 Normal		: NORMAL0;
 	float4 Diffuse		: COLOR0;
 	float2 UV   		: TEXCOORD0;
 };

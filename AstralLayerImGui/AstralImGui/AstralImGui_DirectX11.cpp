@@ -1,5 +1,11 @@
 #include"AstralImGui.h"
+
+#pragma warning(push)
+#pragma warning(disable:26451)
+#pragma warning(disable:6386)
+#pragma warning(disable:4244)
 #include"../ImGUI/imgui_impl_dx11.h"
+#pragma warning(pop)
 
 AstralImGui::DX11ImGui::~DX11ImGui()
 {
