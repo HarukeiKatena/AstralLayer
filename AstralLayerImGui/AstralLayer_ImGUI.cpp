@@ -44,9 +44,9 @@ bool AstralImGui::ImGuiInit(
 #endif
 
 	//対応したインターフェースで作成
-	if (pDevice->GetGraphics_Interface() == ATL_GRAPHIC_INTERFACE::DirectX11)		//DirectX11
+	if (pDevice->GetGraphicsInterface() == ATL_GRAPHIC_INTERFACE::DirectX11)		//DirectX11
 		g_pAstralImGui = new AstralImGui::DX11ImGui();
-	else if (pDevice->GetGraphics_Interface() == ATL_GRAPHIC_INTERFACE::DirectX12)	//DirectX12
+	else if (pDevice->GetGraphicsInterface() == ATL_GRAPHIC_INTERFACE::DirectX12)	//DirectX12
 		g_pAstralImGui = new AstralImGui::DX12ImGui();
 	else
 		return false;

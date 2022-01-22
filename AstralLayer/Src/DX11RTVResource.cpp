@@ -1,12 +1,12 @@
 #include"../Include/ATL/AstralDirectX11.h"
 #include"../Include/AstralDebug.h"
 
-AstralLayerDirectX11::DX11RTVResource::~DX11RTVResource()
+AstralLayerDirectX11::DX11SRVResource::~DX11SRVResource()
 {
 
 }
 
-unsigned int AstralLayerDirectX11::DX11RTVResource::SetSubResource(
+unsigned int AstralLayerDirectX11::DX11SRVResource::SetSubResource(
 	const void* pData, 
 	unsigned int SetByteSize)
 {
@@ -15,7 +15,7 @@ unsigned int AstralLayerDirectX11::DX11RTVResource::SetSubResource(
 	return UINT_MAX;
 }
 
-bool AstralLayerDirectX11::DX11RTVResource::UpdateSubResource(
+bool AstralLayerDirectX11::DX11SRVResource::UpdateSubResource(
 	unsigned int SubResourceID, 
 	unsigned int MoveByte, 
 	const void* pData, 
@@ -28,18 +28,13 @@ bool AstralLayerDirectX11::DX11RTVResource::UpdateSubResource(
 	return true;
 }
 
-void AstralLayerDirectX11::DX11RTVResource::Release()
+void AstralLayerDirectX11::DX11SRVResource::Release()
 {
 	delete this;
 }
 
-void AstralLayerDirectX11::DX11RTVResource::GetHandle(void** ppOut, int Handle)
+void AstralLayerDirectX11::DX11SRVResource::GetHandle(void** ppOut, int Handle)
 {
 	Handle;
-	*ppOut = m_pBuffer.Get();
-}
-
-void AstralLayerDirectX11::DX11RTVResource::SetBuffer(ID3D11Resource* pBuffer)
-{
-	m_pBuffer = pBuffer;
+	*ppOut = m_pResource.Get();
 }

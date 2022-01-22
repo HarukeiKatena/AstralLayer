@@ -6,28 +6,20 @@
 //==========================================================================
 AstralLayerDirectX12::DX12RenderTargetView::~DX12RenderTargetView()
 {
-    delete m_pRTV;
+
 }
 
 void AstralLayerDirectX12::DX12RenderTargetView::GetHandle(
     void** ppOut, 
     int Handle)
 {
-    if (Handle == RTV_HEAP)
-    {
-        *ppOut = m_pRTV->m_pHeap.Get();
-    }
-    else if(Handle >= RTV_RESOURCE)
-    {
-        *ppOut = m_pRTV->m_pRenderTargets[(Handle - 1) % m_pRTV->m_ArraySize].Get();
-    }
+    m_pRTV.GetHandle(ppOut, Handle);
 }
 
 AstralLayer::ATLIResource* AstralLayerDirectX12::DX12RenderTargetView::GetResource(
     AstralLayer::ATLIFence* pFence)
 {
-    pFence;
-    return m_pRTV;
+    return &m_pRTV;
 }
 
 void AstralLayerDirectX12::DX12RenderTargetView::Release()
@@ -41,53 +33,50 @@ bool AstralLayerDirectX12::DX12RenderTargetView::Create(
     unsigned int ScreenWidth,
     unsigned int ScreenHeight)
 {
-    m_pRTV = new DX12RTVResource();
-    m_pRTV->m_pParentRTV = this;
-
     //スワップチェインがある際はバッファーカウントを取得して配列数にする
     if (pSwapChain != nullptr)
     {
         DXGI_SWAP_CHAIN_DESC desc{};
         pSwapChain->GetDesc(&desc);
-        m_pRTV->m_ArraySize = desc.BufferCount;
+        m_pRTV.m_ArraySize = desc.BufferCount;
     }
     else
     {
-        m_pRTV->m_ArraySize = 1;//ない場合は1
+        m_pRTV.m_ArraySize = 1;//ない場合は1
     }
 
     //ヒープ作成
     D3D12_DESCRIPTOR_HEAP_DESC hdesc{};
-    hdesc.NumDescriptors = m_pRTV->m_ArraySize;
+    hdesc.NumDescriptors = m_pRTV.m_ArraySize;
     hdesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     hdesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     hdesc.NodeMask = 0;
 
-    HRESULT hr = pDevice->CreateDescriptorHeap(&hdesc, IID_PPV_ARGS(&m_pRTV->m_pHeap));
+    HRESULT hr = pDevice->CreateDescriptorHeap(&hdesc, IID_PPV_ARGS(&m_pRTV.m_pHeap));
     if (FAILED(hr))
         return false;
 
     //リソース準備
-    m_pRTV->m_pRenderTargets = new Microsoft::WRL::ComPtr<ID3D12Resource>[m_pRTV->m_ArraySize];
-    for (unsigned int i = 0; i < m_pRTV->m_ArraySize; i++)
+    m_pRTV.m_pResource = new Microsoft::WRL::ComPtr<ID3D12Resource>[m_pRTV.m_ArraySize];
+    for (unsigned int i = 0; i < m_pRTV.m_ArraySize; i++)
     {
-        m_pRTV->m_pRenderTargets[i] = nullptr;
+        m_pRTV.m_pResource[i] = nullptr;
     }
 
     //リソース作成
-    D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pRTV->m_pHeap->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pRTV.m_pHeap->GetCPUDescriptorHandleForHeapStart();
     if (pSwapChain != nullptr)
     {
         //スワップチェインがある場合
-        for (unsigned int i = 0; i < m_pRTV->m_ArraySize; i++)
+        for (unsigned int i = 0; i < m_pRTV.m_ArraySize; i++)
         {
-            hr = pSwapChain->GetBuffer(i, IID_PPV_ARGS(&m_pRTV->m_pRenderTargets[i]));
+            hr = pSwapChain->GetBuffer(i, IID_PPV_ARGS(&m_pRTV.m_pResource[i]));
             if (FAILED(hr))
             {
                 this->~DX12RenderTargetView();
                 return false;
             }
-            pDevice->CreateRenderTargetView(m_pRTV->m_pRenderTargets[i].Get(), nullptr, handle);
+            pDevice->CreateRenderTargetView(m_pRTV.m_pResource[i].Get(), nullptr, handle);
             handle.ptr += pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
         }
     }
@@ -120,14 +109,14 @@ bool AstralLayerDirectX12::DX12RenderTargetView::Create(
             &desc,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
             nullptr,
-            IID_PPV_ARGS(&m_pRTV->m_pRenderTargets[0])
+            IID_PPV_ARGS(&m_pRTV.m_pResource[0])
         );
         if (FAILED(hr))
         {
             this->~DX12RenderTargetView();
             return false;
         }
-        pDevice->CreateRenderTargetView(m_pRTV->m_pRenderTargets[0].Get(), nullptr, handle);
+        pDevice->CreateRenderTargetView(m_pRTV.m_pResource[0].Get(), nullptr, handle);
     }
     
     return true;

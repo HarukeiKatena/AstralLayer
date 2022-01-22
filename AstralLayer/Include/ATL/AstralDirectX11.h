@@ -422,102 +422,7 @@ namespace AstralLayerDirectX11
 		);
 	};
 
-	static const int RTV_RTV = 0; //!< AstralDirectX11::DX11RenderTargetView::Gethandle()のHandleで利用する定数
-
-	/****************************************************************//**
-	 * DX11レンダーターゲットビュー
-	 *******************************************************************/
-	class DX11RenderTargetView : public AstralRHI::RHIRenderTargetView
-	{
-	private:
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRenderTarget = nullptr; //<! レンダーターゲットビュー
-	public:
-		/****************************************************************//**
-		 * デストラクタ
-		 *******************************************************************/
-		~DX11RenderTargetView();
-
-		/****************************************************************//**
-		 * @see Astrallayer::ATLIRenderTargetView::GetResource()
-		 *******************************************************************/
-		AstralLayer::ATLIResource* GetResource(
-			AstralLayer::ATLIFence* pFence
-		)override;
-
-		/****************************************************************//**
-		 * @see Astrallayer::ATLIRenderTargetView::ImGuiRelease()
-		 *******************************************************************/
-		void Release()override;
-
-		/****************************************************************//**
-		 *  @see AstralRHI::RHIRenderTargetView::GetHandle()
-		 *******************************************************************/
-		void GetHandle(
-			void** ppOut,
-			int Handle
-		) override;
-
-		/****************************************************************//**
-		 *  レンダーターゲットビュー作成関数
-		 * 
-		 * \param pDevice [in] DX11のデバイス
-		 * \param pSwapChain [in] スワップチェイン　NULLでもよい
-		 * \param ScreenWidth [in] 画面幅
-		 * \param ScreenHeight [in] 画面高さ
-		 * \return 結果の正負
-		 *******************************************************************/
-		bool Create(
-			ID3D11Device* pDevice,
-			IDXGISwapChain* pSwapChain,
-			unsigned int ScreenWidth,
-			unsigned int ScreenHeight);
-	};
-
-	static const unsigned int DSV_DSV = 0; //!< AstralDirectX11::DX11DepthStencilView::Gethandle()のHandleで利用する定数
-
-	/****************************************************************//**
-	 * DX11デプスステンシルビュー
-	 *******************************************************************/
-	class DX11DepthStencilView : public AstralRHI::RHIDepthStencilView
-	{
-	private:
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pView = nullptr; //!< デプスステンシルビュー
-
-	private:
-		D3D11_DSV_DIMENSION ConvDimension(ATL_DSV_DIMENSION Dimension);
-
-	public:
-		/****************************************************************//**
-		 *  デストラクタ
-		 *******************************************************************/
-		virtual ~DX11DepthStencilView();
-
-		/****************************************************************//**
-		 * @see Astrallayer::ATLIDepthStencilView::ImGuiRelease()
-		 *******************************************************************/
-		void Release()override;
-
-		/****************************************************************//**
-		 *  @see AstralRHI::RHIDepthStencilView::GetHandle()
-		 *******************************************************************/
-		void GetHandle(
-			void** ppOut, 
-			int Handle
-		)override;
-
-		/****************************************************************//**
-		 * デプスステンシルビュー作成関数
-		 * 
-		 * \param pDevice [in] DX11のデバイス
-		 * \param Desc [in] デプスステンシルビューのデスク
-		 * \return 結果の正負
-		 *******************************************************************/
-		bool Create(
-			ID3D11Device* pDevice,
-			ATL_DEPTH_STENCIL_VIEW_DESC& Desc
-		);
-
-	};
+	
 
 	static const int RESOURCE_FORMAT = -2;			//!< AstralDirectX11::DX11Resource::Gethandle()のHandleで利用する定数
 	static const int RESOURCE_STRUCTURESIZE = -1;	//!< AstralDirectX11::DX11Resource::Gethandle()のHandleで利用する定数
@@ -664,16 +569,15 @@ namespace AstralLayerDirectX11
 	/****************************************************************//**
 	 * DX11レンダーターゲットビューの戻り値で利用するリソース
 	 *******************************************************************/
-	class DX11RTVResource : public AstralRHI::RHIResource
+	class DX11SRVResource : public AstralRHI::RHIResource
 	{
-	private:
-		Microsoft::WRL::ComPtr<ID3D11Resource> m_pBuffer = nullptr; //!< バッファー
-
 	public:
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pResource = nullptr; //<! リソース
+
 		/****************************************************************//**
 		 * デストラクタ
 		 *******************************************************************/
-		virtual ~DX11RTVResource();
+		virtual ~DX11SRVResource();
 
 		/****************************************************************//**
 		 * @see Astrallayer::ATLIResource::SetSubResource()
@@ -705,13 +609,114 @@ namespace AstralLayerDirectX11
 			void** ppOut,
 			int Handle
 		)override;
+	};
+
+	static const int RTV_RTV = 0; //!< AstralDirectX11::DX11RenderTargetView::Gethandle()のHandleで利用する定数
+	static const int RTV_RESOURCE = 1;
+
+	/****************************************************************//**
+	 * DX11レンダーターゲットビュー
+	 *******************************************************************/
+	class DX11RenderTargetView : public AstralRHI::RHIRenderTargetView
+	{
+	private:
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRenderTarget = nullptr; //<! レンダーターゲットビュー
+		DX11SRVResource* m_pResource = nullptr;
+
+	public:
+		/****************************************************************//**
+		 * デストラクタ
+		 *******************************************************************/
+		~DX11RenderTargetView();
 
 		/****************************************************************//**
-		 * バッファーをセットする
-		 * 
-		 * \param pBuffer バッファーデータ
+		 * @see Astrallayer::ATLIRenderTargetView::GetResource()
 		 *******************************************************************/
-		void SetBuffer(ID3D11Resource* pBuffer);
+		AstralLayer::ATLIResource* GetResource(
+			AstralLayer::ATLIFence* pFence
+		)override;
+
+		/****************************************************************//**
+		 * @see Astrallayer::ATLIRenderTargetView::ImGuiRelease()
+		 *******************************************************************/
+		void Release()override;
+
+		/****************************************************************//**
+		 *  @see AstralRHI::RHIRenderTargetView::GetHandle()
+		 *******************************************************************/
+		void GetHandle(
+			void** ppOut,
+			int Handle
+		) override;
+
+		/****************************************************************//**
+		 *  レンダーターゲットビュー作成関数
+		 *
+		 * \param pDevice [in] DX11のデバイス
+		 * \param pSwapChain [in] スワップチェイン　NULLでもよい
+		 * \param ScreenWidth [in] 画面幅
+		 * \param ScreenHeight [in] 画面高さ
+		 * \return 結果の正負
+		 *******************************************************************/
+		bool Create(
+			ID3D11Device* pDevice,
+			IDXGISwapChain* pSwapChain,
+			unsigned int ScreenWidth,
+			unsigned int ScreenHeight);
+	};
+
+	static const unsigned int DSV_DSV = 0; //!< AstralDirectX11::DX11DepthStencilView::Gethandle()のHandleで利用する定数
+
+	/****************************************************************//**
+	 * DX11デプスステンシルビュー
+	 *******************************************************************/
+	class DX11DepthStencilView : public AstralRHI::RHIDepthStencilView
+	{
+	private:
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pView = nullptr; //!< デプスステンシルビュー
+		DX11SRVResource* m_pResource = nullptr; //!< リソース
+
+	private:
+		D3D11_DSV_DIMENSION ConvDimension(ATL_DSV_DIMENSION Dimension);
+
+	public:
+		/****************************************************************//**
+		 *  デストラクタ
+		 *******************************************************************/
+		virtual ~DX11DepthStencilView();
+
+		/****************************************************************//**
+		 * @see Astrallayer::ATLIDepthStencilView::Release()
+		 *******************************************************************/
+		void Release()override;
+
+		/****************************************************************//**
+		 * @see Astrallayer::ATLIDepthStencilView::GetResource()
+		 *******************************************************************/
+		AstralLayer::ATLIResource* GetResource(
+			AstralLayer::ATLIFence* pFence
+		)override;
+
+		/****************************************************************//**
+		 *  @see AstralRHI::RHIDepthStencilView::GetHandle()
+		 *******************************************************************/
+		void GetHandle(
+			void** ppOut,
+			int Handle
+		)override;
+
+		/****************************************************************//**
+		 * デプスステンシルビュー作成関数
+		 *
+		 * \param pDevice [in] DX11のデバイス
+		 * \param Desc [in] デプスステンシルビューのデスク
+		 * \return 結果の正負
+		 *******************************************************************/
+		bool Create(
+			ID3D11Device* pDevice,
+			ATL_DEPTH_STENCIL_VIEW_DESC& Desc
+		);
+
 	};
 
 	static const int FENCE_FENCE = 0; //!< AstralDirectX11::DX11Fence::Gethandle()のHandleで利用する定数

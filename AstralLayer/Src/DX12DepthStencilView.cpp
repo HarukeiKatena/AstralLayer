@@ -17,21 +17,23 @@ D3D12_DSV_DIMENSION AstralLayerDirectX12::DX12DepthStencilView::ConvDimension(AT
 //==========================================================================
 AstralLayerDirectX12::DX12DepthStencilView::~DX12DepthStencilView()
 {
-    m_pdsvHeap.Reset();
-    m_pResource.Reset();
 }
 
 void AstralLayerDirectX12::DX12DepthStencilView::GetHandle(
     void** ppOut, 
     int Handle)
 {
-    Handle;
-    *ppOut = m_pdsvHeap.Get();
+    m_pDSV.GetHandle(ppOut, Handle);
 }
 
 void AstralLayerDirectX12::DX12DepthStencilView::Release()
 {
     delete this;
+}
+
+AstralLayer::ATLIResource* AstralLayerDirectX12::DX12DepthStencilView::GetResource(AstralLayer::ATLIFence* pFence)
+{
+    return nullptr;
 }
 
 bool AstralLayerDirectX12::DX12DepthStencilView::Create(
@@ -40,13 +42,15 @@ bool AstralLayerDirectX12::DX12DepthStencilView::Create(
 {
 	HRESULT hr = S_OK;
 
+    m_pDSV.m_ArraySize = 1;
+
 	//デスクリプターヒープの作成
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC dhdesc{};
 		dhdesc.NumDescriptors = 1;
 		dhdesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		dhdesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-		hr = pDevice->CreateDescriptorHeap(&dhdesc, IID_PPV_ARGS(&m_pdsvHeap));
+		hr = pDevice->CreateDescriptorHeap(&dhdesc, IID_PPV_ARGS(&m_pDSV.m_pHeap));
 		if (FAILED(hr))
 			return false;
 	}
@@ -81,13 +85,14 @@ bool AstralLayerDirectX12::DX12DepthStencilView::Create(
         clearvalue.DepthStencil.Stencil = 0;
 
         //リソース作成
+        m_pDSV.m_pResource = new Microsoft::WRL::ComPtr<ID3D12Resource>[m_pDSV.m_ArraySize];
         hr = pDevice->CreateCommittedResource(
             &prop,
             D3D12_HEAP_FLAG_NONE,
             &desc,
             D3D12_RESOURCE_STATE_DEPTH_WRITE,
             &clearvalue,
-            IID_PPV_ARGS(&m_pResource)
+            IID_PPV_ARGS(&m_pDSV.m_pResource[0])
         );
         if (FAILED(hr))
             return false;
@@ -102,9 +107,9 @@ bool AstralLayerDirectX12::DX12DepthStencilView::Create(
 
         //ヒープにセット
         pDevice->CreateDepthStencilView(
-            m_pResource.Get(),
+            m_pDSV.m_pResource[0].Get(),
             &dsvdesc,
-            m_pdsvHeap->GetCPUDescriptorHandleForHeapStart()
+            m_pDSV.m_pHeap.Get()->GetCPUDescriptorHandleForHeapStart()
         );
     }
 

@@ -537,25 +537,23 @@ namespace AstralLayerDirectX12
 		);
 	};
 
-	// Gethandleの定数はDX12RenderTargetViewの所にあります
+	static const int RTVRESOURCE_HEAP = 0;			//!< AstralDirectX12::DX12RTVResource::GetHandle()で利用する定数
+	static const int RTVRESOURCE_RESOURCE = 1;		//!< AstralDirectX12::DX12RTVResource::GetHandle()で利用する定数
+
 
 	/****************************************************************//**
 	 * DX12RenderTargetView::GetResource()で使う専用のリソース
 	 * @attention このクラスの利用が終わったら必ずReleaseしてください。メモリリークの原因になります
 	 *******************************************************************/
-	class DX12RTVResource : public AstralRHI::RHIResource
+	class DX12SIMPLEResource : public AstralRHI::RHIResource
 	{
-	private:
+	public:
 		unsigned int m_ArraySize = 0;				//!< 配列サイズ
-		Microsoft::WRL::ComPtr<ID3D12Resource>* m_pRenderTargets = nullptr;//!< RTVリソース配列
+		Microsoft::WRL::ComPtr<ID3D12Resource>* m_pResource = nullptr;//!< RTVリソース配列
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_pHeap = nullptr;	//!< ヒープ
 
-		DX12RenderTargetView* m_pParentRTV = nullptr;//!< 自分を管理しているRTV
-
 	public:
-		friend DX12RenderTargetView;
-
-		virtual ~DX12RTVResource();
+		virtual ~DX12SIMPLEResource();
 
 		/****************************************************************//**
 		 * @see Astrallayer::ATLIResource::SetSubResource()
@@ -591,19 +589,16 @@ namespace AstralLayerDirectX12
 		) override;
 	};
 
-	static const int RTV_HEAP = 0;		//!< AstralDirectX12::DX12RenderTargetView::GetHandle()で利用する定数
-	static const int RTV_RESOURCE = 1;	//!< AstralDirectX12::DX12RenderTargetView::GetHandle()で利用する定数
-
-	static const int RTVRESOURCE_HEAP = RTV_HEAP;			//!< AstralDirectX12::DX12RTVResource::GetHandle()で利用する定数
-	static const int RTVRESOURCE_RESOURCE = RTV_RESOURCE;	//!< AstralDirectX12::DX12RTVResource::GetHandle()で利用する定数
-
+	static const int RTV_HEAP = RTVRESOURCE_HEAP;			//!< AstralDirectX12::DX12RenderTargetView::GetHandle()で利用する定数
+	static const int RTV_RESOURCE = RTVRESOURCE_RESOURCE;	//!< AstralDirectX12::DX12RenderTargetView::GetHandle()で利用する定数
+	
 	/****************************************************************//**
 	 * DX12レンダーターゲットビュー
 	 *******************************************************************/
 	class DX12RenderTargetView : public AstralRHI::RHIRenderTargetView
 	{
 	private:
-		DX12RTVResource* m_pRTV;
+		DX12SIMPLEResource m_pRTV;
 
 	public:
 		/****************************************************************//**
@@ -648,7 +643,8 @@ namespace AstralLayerDirectX12
 		);
 	};
 
-	static const int DSV_HEAP = 0; //!< AstralDirectX12::DX12DepthStencilView::GetHandle()で利用する定数
+	static const int DSV_HEAP = RTVRESOURCE_HEAP;			//!< AstralDirectX12::DX12DepthStencilView::GetHandle()で利用する定数
+	static const int DSV_RESOURCE = RTVRESOURCE_RESOURCE;	//!< AstralDirectX12::DX12DepthStencilView::GetHandle()で利用する定数
 
 	/****************************************************************//**
 	 * DX12デプスステンシルビュー
@@ -656,8 +652,7 @@ namespace AstralLayerDirectX12
 	class DX12DepthStencilView : public AstralRHI::RHIDepthStencilView
 	{
 	private:
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_pdsvHeap = nullptr;
-		Microsoft::WRL::ComPtr<ID3D12Resource> m_pResource = nullptr;
+		DX12SIMPLEResource m_pDSV;
 
 	private:
 		D3D12_DSV_DIMENSION ConvDimension(ATL_DSV_DIMENSION dimension);
@@ -672,6 +667,13 @@ namespace AstralLayerDirectX12
 		 * @see Astrallayer::ATLIDepthStencilView::ImGuiRelease()
 		 *******************************************************************/
 		void Release()override;
+
+		/****************************************************************//**
+		 * @see Astrallayer::ATLIDepthStencilView::GetResource()
+		 *******************************************************************/
+		AstralLayer::ATLIResource* GetResource(
+			AstralLayer::ATLIFence* pFence
+		)override;
 
 		/****************************************************************//**
 		 *  @see AstralRHI::RHIDepthStencilView::GetHandle()

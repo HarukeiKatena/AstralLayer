@@ -14,7 +14,7 @@ D3D11_DSV_DIMENSION AstralLayerDirectX11::DX11DepthStencilView::ConvDimension(AT
 
 AstralLayerDirectX11::DX11DepthStencilView::~DX11DepthStencilView()
 {
-	
+	delete m_pResource;
 }
 
 void AstralLayerDirectX11::DX11DepthStencilView::GetHandle(
@@ -28,6 +28,12 @@ void AstralLayerDirectX11::DX11DepthStencilView::GetHandle(
 void AstralLayerDirectX11::DX11DepthStencilView::Release()
 {
 	delete this;
+}
+
+AstralLayer::ATLIResource* AstralLayerDirectX11::DX11DepthStencilView::GetResource(
+	AstralLayer::ATLIFence* pFence)
+{
+	return nullptr;
 }
 
 bool AstralLayerDirectX11::DX11DepthStencilView::Create(
@@ -44,28 +50,36 @@ bool AstralLayerDirectX11::DX11DepthStencilView::Create(
 	TextureDesc.Height = Desc.Height;
 	TextureDesc.MipLevels = 1;
 	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_D16_UNORM;
+	TextureDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 	TextureDesc.SampleDesc = sample;
 	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
-	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
 	//テクスチャ作成
-	ID3D11Texture2D* texture = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture = nullptr;
 	if (FAILED(pDevice->CreateTexture2D(&TextureDesc, nullptr, &texture)))
 		return false;
 
 	//デプスステンシルビューデスク準備
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvdesc;
-	dsvdesc.Format = TextureDesc.Format;
+	dsvdesc.Format = DXGI_FORMAT_D32_FLOAT;
 	dsvdesc.ViewDimension = ConvDimension(Desc.Dimension);
 	dsvdesc.Flags = 0;
 	dsvdesc.Texture2D.MipSlice = 0;
 
 	//デプスステンシルビュー作成
-	HRESULT hr = pDevice->CreateDepthStencilView(texture, &dsvdesc, &m_pView);
-	texture->Release();//テクスチャは解放しておく
+	HRESULT hr = pDevice->CreateDepthStencilView(texture.Get(), &dsvdesc, &m_pView);
+	if (FAILED(hr))
+		return false;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC  SRVDesc = {};
+	SRVDesc.Format = DXGI_FORMAT_R32_FLOAT;//ピクセルフォーマットは32BitFLOAT型
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	SRVDesc.Texture2D.MipLevels = 1;
+	m_pResource = new DX11SRVResource();
+	hr = pDevice->CreateShaderResourceView(texture.Get(), &SRVDesc, &m_pResource->m_pResource);
 	if (FAILED(hr))
 		return false;
 

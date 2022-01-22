@@ -3,7 +3,7 @@
 #include "../Include/ATL/AstralDirectX.h"
 
 //==========================================================================
-// DX12ç”¨ã‚µãƒãƒ¼ãƒˆ
+// DX12—pƒTƒ|[ƒg
 //==========================================================================
 D3D12_HEAP_TYPE ConvType(ATL_RESOURCE_TYPE type)
 {
@@ -38,12 +38,12 @@ void AstralLayerDirectX12::DX12Device::GetHandle(
 }
 
 //==========================================================================
-// ãƒ‡ãƒã‚¤ã‚¹
+// ƒfƒoƒCƒX
 //==========================================================================
 AstralLayerDirectX12::DX12Device::~DX12Device()
 {
     /*
-    //ãƒ¡ãƒ¢ãƒªãƒ¼ãƒªãƒ¼ã‚¯ãƒã‚§ãƒƒã‚¯ç”¨
+    //ƒƒ‚ƒŠ[ƒŠ[ƒNƒ`ƒFƒbƒN—p
     ID3D12DebugDevice* debugInterface;
     if (SUCCEEDED(m_pDevice->QueryInterface(&debugInterface)))
     {
@@ -56,11 +56,11 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
     ATL_RESOURCE_DESC& Desc,
     const void* pSrcData)
 {
-    //ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
+    //ƒGƒ‰[ƒ`ƒFƒbƒN
     assert(Desc.Flag != ATL_RESOURCE_FLAG::UNKNOWN);
 
-    //ä½œæˆå‡¦ç†
-    if (Desc.Flag == ATL_RESOURCE_FLAG::CONSTANTBUFFER)//å®šæ•°ãƒãƒƒãƒ•ã‚¡
+    //ì¬ˆ—
+    if (Desc.Flag == ATL_RESOURCE_FLAG::CONSTANTBUFFER)//’è”ƒoƒbƒtƒ@
     {
         DX12ConstantBuffer* pR = new DX12ConstantBuffer();
         if (pR->CreateConstantBuffer(
@@ -68,13 +68,13 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
             Desc,
             pSrcData) == false)
         {
-            ATLAssertMessage(false, "Resourceã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+            ATLAssertMessage(false, "Resource‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
             delete pR;
             pR = nullptr;
         }
         return pR;
     }
-    else if (Desc.Flag == ATL_RESOURCE_FLAG::VERTEXBUFFER)//é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
+    else if (Desc.Flag == ATL_RESOURCE_FLAG::VERTEXBUFFER)//’¸“_ƒoƒbƒtƒ@
     {
         DX12VertexBuffer* pVB = new DX12VertexBuffer();
         if (pVB->CreateVertexBuffer(
@@ -82,13 +82,13 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
             Desc,
             pSrcData) == false)
         {
-            ATLAssertMessage(false, "Resourceã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+            ATLAssertMessage(false, "Resource‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
             delete pVB;
             pVB = nullptr;
         }
         return pVB;
     }
-    else if (Desc.Flag == ATL_RESOURCE_FLAG::INDEXBUFFER)//ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡
+    else if (Desc.Flag == ATL_RESOURCE_FLAG::INDEXBUFFER)//ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@
     {
         DX12IndexBuffer* pIB = new DX12IndexBuffer();
         if (pIB->CreateIndexBuffer(
@@ -96,13 +96,13 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
             Desc,
             pSrcData) == false)
         {
-            ATLAssertMessage(false, "Resourceã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+            ATLAssertMessage(false, "Resource‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
             delete pIB;
             pIB = nullptr;
         }
         return pIB;
     }
-    else if (Desc.Flag == ATL_RESOURCE_FLAG::TEXTURE2D)//ãƒ†ã‚¯ã‚¹ãƒãƒ£
+    else if (Desc.Flag == ATL_RESOURCE_FLAG::TEXTURE2D)//ƒeƒNƒXƒ`ƒƒ
     {
         DX12Texture2D* pTex = new DX12Texture2D();
         if (pTex->CreateTexture(
@@ -110,7 +110,7 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
             Desc,
             pSrcData) == false)
         {
-            ATLAssertMessage(false, "Resourceã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+            ATLAssertMessage(false, "Resource‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
             delete pTex;
             pTex = nullptr;
         }
@@ -125,11 +125,11 @@ AstralLayer::ATLIResource* AstralLayerDirectX12::DX12Device::CreateResource(
 AstralLayer::ATLIPipeLine* AstralLayerDirectX12::DX12Device::CreatePipeLine(
     ATL_GRAPHICS_PIPELINE_STATE_DESC& Desc)
 {
-    //ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ä½œæˆ
+    //ƒpƒCƒvƒ‰ƒCƒ“ì¬
     DX12PipeLine* pOut = new DX12PipeLine();
     if (pOut->Create(m_pDevice.Get(), Desc) == false)
     {
-        ATLAssertMessage(false, "PipeLineã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+        ATLAssertMessage(false, "PipeLine‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
         delete pOut;
         pOut = nullptr;
     }
@@ -139,11 +139,11 @@ AstralLayer::ATLIPipeLine* AstralLayerDirectX12::DX12Device::CreatePipeLine(
 AstralLayer::ATLIDepthStencilView* AstralLayerDirectX12::DX12Device::CreateDepthStencilView(
     ATL_DEPTH_STENCIL_VIEW_DESC& Desc)
 {
-    //ãƒ‡ãƒ—ã‚¹ã‚¹ãƒ†ãƒ³ã‚·ãƒ«ãƒ“ãƒ¥ãƒ¼ä½œæˆ
+    //ƒfƒvƒXƒXƒeƒ“ƒVƒ‹ƒrƒ…[ì¬
     DX12DepthStencilView* pOut = new DX12DepthStencilView();
     if (pOut->Create(m_pDevice.Get(), Desc) == false)
     {
-        ATLAssertMessage(false, "DepthStencilViewã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+        ATLAssertMessage(false, "DepthStencilView‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
         delete pOut;
         pOut = nullptr;
     }
@@ -153,11 +153,11 @@ AstralLayer::ATLIDepthStencilView* AstralLayerDirectX12::DX12Device::CreateDepth
 
 AstralLayer::ATLICommandList* AstralLayerDirectX12::DX12Device::CreateCommandList()
 {
-    //ã‚³ãƒãƒ³ãƒ‰ãƒªã‚¹ãƒˆä½œæˆ
+    //ƒRƒ}ƒ“ƒhƒŠƒXƒgì¬
     DX12CommandList* pOut = new DX12CommandList();
     if (pOut->Create(m_pDevice.Get()) == false)
     {
-        ATLAssertMessage(false, "CommandListã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+        ATLAssertMessage(false, "CommandList‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
         delete pOut;
         pOut = nullptr;
     }
@@ -167,11 +167,11 @@ AstralLayer::ATLICommandList* AstralLayerDirectX12::DX12Device::CreateCommandLis
 
 AstralLayer::ATLICommandQueue* AstralLayerDirectX12::DX12Device::CreateCommandQueue()
 {   
-    //ã‚³ãƒãƒ³ãƒ‰ã‚­ãƒ¥ãƒ¼ä½œæˆ
+    //ƒRƒ}ƒ“ƒhƒLƒ…[ì¬
     DX12CommandQueue* pOut = new DX12CommandQueue();
     if (pOut->Create(m_pDevice.Get()) == false)
     {
-        ATLAssertMessage(false, "CommandQueueã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+        ATLAssertMessage(false, "CommandQueue‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
         delete pOut;
         pOut = nullptr;
     }
@@ -182,11 +182,11 @@ AstralLayer::ATLISwapChain* AstralLayerDirectX12::DX12Device::CreateSwapChain(
     ATL_SWAPCHAIN_DESC& Desc, 
     AstralLayer::ATLICommandQueue* pCommandQueue)
 {
-    //ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ä½œæˆ
+    //ƒXƒƒbƒvƒ`ƒFƒCƒ“ì¬
     DX12SwapChain* pOut = new DX12SwapChain();
     if (pOut->Create(m_pDevice.Get(), Desc, pCommandQueue) == false)
     {
-        ATLAssertMessage(false, "SwapChainã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+        ATLAssertMessage(false, "SwapChain‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
         delete pOut;
         pOut = nullptr;
     }
@@ -196,11 +196,11 @@ AstralLayer::ATLISwapChain* AstralLayerDirectX12::DX12Device::CreateSwapChain(
 
 AstralLayer::ATLIFence* AstralLayerDirectX12::DX12Device::CreateFence()
 {
-    //ãƒ•ã‚§ãƒ³ã‚¹ä½œæˆ
+    //ƒtƒFƒ“ƒXì¬
     DX12Fence* pOut = new DX12Fence();
     if (pOut->Create(m_pDevice.Get()) == false)
     {
-        ATLAssertMessage(false, "ãƒ•ã‚§ãƒ³ã‚¹ã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+        ATLAssertMessage(false, "ƒtƒFƒ“ƒX‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
         delete pOut;
         pOut = nullptr;
     }
@@ -212,16 +212,16 @@ AstralLayer::ATLIRenderTargetView* AstralLayerDirectX12::DX12Device::CreateRende
     unsigned int ScreenWidth,
     unsigned int ScreenHeight)
 {
-    //ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³å–å¾—ã€€NULLãªã‚‰å–å¾—ã—ãªã„
+    //ƒXƒƒbƒvƒ`ƒFƒCƒ“æ“¾@NULL‚È‚çæ“¾‚µ‚È‚¢
     IDXGISwapChain3* swap = nullptr;
     if (SwapChain != nullptr)
         reinterpret_cast<AstralRHI::RHISwapChain*>(SwapChain)->GetHandle(reinterpret_cast<void**>(&swap), 0);
 
-    //ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãƒ“ãƒ¥ãƒ¼ä½œæˆ
+    //ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒgƒrƒ…[ì¬
     DX12RenderTargetView* pOut = new DX12RenderTargetView();
     if (pOut->Create(m_pDevice.Get(), swap, ScreenWidth, ScreenHeight) == false)
     {
-        ATLAssertMessage(false, "ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãƒ“ãƒ¥ãƒ¼ã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ");
+        ATLAssertMessage(false, "ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒgƒrƒ…[‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½");
         delete pOut;
         pOut = nullptr;
     }
@@ -236,12 +236,12 @@ void AstralLayerDirectX12::DX12Device::Release()
 
 bool AstralLayerDirectX12::DX12Device::Create(IDXGIFactory1* pFactory)
 {
-    //ã‚¢ãƒ€ãƒ—ã‚¿ãƒ¼æº–å‚™
+    //ƒAƒ_ƒvƒ^[€”õ
     IDXGIAdapter1* pAdapter;
     IDXGIAdapter1* vAdapters[8] = {};
 
     unsigned int id = 0;
-  
+
     for (unsigned int i = 0; S_OK == pFactory->EnumAdapters1(i, &pAdapter); i++)
     {
         DXGI_ADAPTER_DESC1 desc{};
@@ -264,7 +264,7 @@ bool AstralLayerDirectX12::DX12Device::Create(IDXGIFactory1* pFactory)
             DXGI_ADAPTER_DESC1 check{};
             vAdapters[c]->GetDesc1(&check);
 
-            //ãƒ“ãƒ‡ã‚ªãƒ¡ãƒ¢ãƒªãŒãƒã‚§ãƒƒã‚¯å…ˆã‚ˆã‚Šå¤§ãã„å ´åˆ
+            //ƒrƒfƒIƒƒ‚ƒŠ‚ªƒ`ƒFƒbƒNæ‚æ‚è‘å‚«‚¢ê‡
             if (check.DedicatedVideoMemory < desc.DedicatedVideoMemory)
             {
                 IDXGIAdapter1* save = vAdapters[c];
@@ -276,12 +276,12 @@ bool AstralLayerDirectX12::DX12Device::Create(IDXGIFactory1* pFactory)
 
         id++;
 
-        //IDãŒ8ã‚’è¶…ãˆãŸã‚‰ã‚¢ãƒ€ãƒ—ã‚¿ãƒ¼ã®åˆ—æŒ™ã‚’çµ‚ãˆã‚‹
+        //ID‚ª8‚ğ’´‚¦‚½‚çƒAƒ_ƒvƒ^[‚Ì—ñ‹“‚ğI‚¦‚é
         if (id >= 8)
             break;
     }
 
-    //ãƒ‡ãƒã‚¤ã‚¹ä½œæˆ
+    //ƒfƒoƒCƒXì¬
     for (unsigned int i = 0; i < id; i++)
     {
         if (m_pDevice != nullptr)

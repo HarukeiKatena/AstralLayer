@@ -3,7 +3,7 @@
 
 AstralLayerDirectX11::DX11RenderTargetView::~DX11RenderTargetView()
 {
-	
+	delete m_pResource;
 }
 
 void AstralLayerDirectX11::DX11RenderTargetView::GetHandle(
@@ -11,7 +11,17 @@ void AstralLayerDirectX11::DX11RenderTargetView::GetHandle(
 	int Handle)
 {
 	Handle;
-	*ppOut = m_pRenderTarget.Get();
+	switch (Handle)
+	{
+	case RTV_RTV:
+		*ppOut = m_pRenderTarget.Get();
+		break;
+	case RTV_RESOURCE:
+		*ppOut = m_pResource->m_pResource.Get();
+		break;
+	default:
+		break;
+	}
 }
 
 AstralLayer::ATLIResource* AstralLayerDirectX11::DX11RenderTargetView::GetResource(
@@ -19,15 +29,7 @@ AstralLayer::ATLIResource* AstralLayerDirectX11::DX11RenderTargetView::GetResour
 {
 	fence;
 
-	//DXのリソース取得
-	ID3D11Resource* resource = nullptr;
-	m_pRenderTarget->GetResource(&resource);
-
-	//ATLのリソース
-	DX11RTVResource* pOut = new DX11RTVResource();
-	pOut->SetBuffer(resource);
-
-	return pOut;
+	return m_pResource;
 }
 
 void AstralLayerDirectX11::DX11RenderTargetView::Release()
@@ -41,23 +43,27 @@ bool AstralLayerDirectX11::DX11RenderTargetView::Create(
 	unsigned int ScreenWidth,
 	unsigned int ScreenHeight)
 {
+	//リソース作成
+	m_pResource = new DX11SRVResource();
+
+	//テクスチャ
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> tex = nullptr;
 
 	if (pSwapChain != nullptr)
 	{
-		ID3D11Texture2D* tex = nullptr;
+		//スワップチェインからバッファを取得
 		HRESULT hr = pSwapChain->GetBuffer(0, IID_PPV_ARGS(&tex));
 		if (FAILED(hr))
 			return false;
 
-		hr = pDevice->CreateRenderTargetView(tex, nullptr, &m_pRenderTarget);
-		tex->Release();
+		//ＲＴＶ作成
+		hr = pDevice->CreateRenderTargetView(tex.Get(), nullptr, &m_pRenderTarget);
 		if (FAILED(hr))
 			return false;
 	}
 	else
 	{
 		//テクスチャ
-		ID3D11Texture2D* tex = nullptr;
 		D3D11_TEXTURE2D_DESC desc{};
 		desc.Width = ScreenWidth;
 		desc.Height = ScreenHeight;
@@ -78,7 +84,16 @@ bool AstralLayerDirectX11::DX11RenderTargetView::Create(
 		D3D11_RENDER_TARGET_VIEW_DESC rtvd{};
 		rtvd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		rtvd.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-		hr = pDevice->CreateRenderTargetView(tex, &rtvd, &m_pRenderTarget);
+		hr = pDevice->CreateRenderTargetView(tex.Get(), &rtvd, &m_pRenderTarget);
+		if (FAILED(hr))
+			return false;
+
+		//ＳＲＶ作成
+		D3D11_SHADER_RESOURCE_VIEW_DESC rtv{};
+		rtv.Format = DXGI_FORMAT_R32_FLOAT;
+		rtv.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		rtv.Texture2D.MipLevels = 1;
+		hr = pDevice->CreateShaderResourceView(tex.Get(), &rtv, &m_pResource->m_pResource);
 		if (FAILED(hr))
 			return false;
 	}

@@ -20,28 +20,32 @@ bool AstralLayerDirectX12::DX12CommandQueue::ExecuteCommandLists(
     unsigned int NumCommandLists,
     AstralLayer::ATLICommandList* const* ppCommandLists)
 {
+    int num = 0;
+    ID3D12CommandList** command = new ID3D12CommandList*[NumCommandLists];
+
     //コマンドを取得
     for (unsigned int i = 0; i < NumCommandLists; i++)
     {
         if(ppCommandLists[i] == nullptr)
             continue;
 
-        //コマンド準備
-        ID3D12CommandList* command = nullptr;
-
         //コマンド取得
         reinterpret_cast<AstralRHI::RHICommandList*>(ppCommandLists[i])->
-            GetHandle(reinterpret_cast<void**>(&command), 0);
+            GetHandle(reinterpret_cast<void**>(&command[num]), COMMANDLIST_COMMAND);
 
-        //コマンド実行
-        m_pCommandQueue->ExecuteCommandLists(1, &command);
+        num++;
     }
+
+    //コマンド実行
+    m_pCommandQueue->ExecuteCommandLists(num, command);
+
+    delete[] command;
+
     return true;
 }
 
 void AstralLayerDirectX12::DX12CommandQueue::Release()
 {
-    m_pCommandQueue.Reset();
     delete this;
 }
 

@@ -198,12 +198,12 @@ ATL_RECT ATLSCreateRect(unsigned int ScreenWidth, unsigned int ScreenHeight)
 }
 
 
-ATLSShaderBinary::~ATLSShaderBinary()
+AstralLayer::ATLSShaderBinary::~ATLSShaderBinary()
 {
 	DeleteBuffer();
 }
 
-bool ATLSShaderBinary::LoadShaderBinary(const char* FilePath)
+bool AstralLayer::ATLSShaderBinary::LoadShaderBinary(const char* FilePath)
 {
 	FILE* fp = nullptr;
 
@@ -231,7 +231,7 @@ bool ATLSShaderBinary::LoadShaderBinary(const char* FilePath)
 	return true;
 }
 
-void ATLSShaderBinary::DeleteBuffer()
+void AstralLayer::ATLSShaderBinary::DeleteBuffer()
 {
 	if (m_Buffer != nullptr)
 		delete[] m_Buffer;

@@ -5,52 +5,207 @@
 #pragma once
 #include"AstralInfo.h"
 
-/****************************************************************//**
- * @brief シェーダーバイナリ読み込みクラス
- * シェーダーのバイナリファイルを読み込み管理するクラス
- *******************************************************************/
-class ATLSShaderBinary
+namespace AstralLayer
 {
-public:
-	unsigned long m_Size = 0;			//!< バッファサイズ
-	unsigned char* m_Buffer = nullptr;	//!< バッファー
+	/****************************************************************//**
+	 * @brief シェーダーバイナリ読み込みクラス
+	 * シェーダーのバイナリファイルを読み込み管理するクラス
+	 *******************************************************************/
+	class ATLSShaderBinary
+	{
+	public:
+		unsigned long m_Size = 0;			//!< バッファサイズ
+		unsigned char* m_Buffer = nullptr;	//!< バッファー
+
+		/****************************************************************//**
+		 * デストラクタ
+		 *******************************************************************/
+		~ATLSShaderBinary();
+
+		/****************************************************************//**
+		 * シェーダーバイナリデータ読み込み関数
+		 *
+		 * \param [in] FilePath	バイナリファイルまでのパス(ファイル名混み)
+		 * \return				結果の正負
+		 *******************************************************************/
+		bool LoadShaderBinary(const char* FilePath);
+
+		/****************************************************************//**
+		 * バッファー削除関数
+		 *******************************************************************/
+		void DeleteBuffer();
+
+		/****************************************************************//**
+		 * バッファーサイズ取得関数
+		 * \return バッファーサイズ
+		 *******************************************************************/
+		unsigned long GetSize()const { return m_Size; }
+
+		/****************************************************************//**
+		 * バッファー取得関数
+		 * \return バッファの先頭ポインタ
+		 *******************************************************************/
+		unsigned char* GetBuffer()const { return m_Buffer; }
+
+		/****************************************************************//**
+		 * ATL_SHADER_BYTECODEで取得
+		 * \return ATL_SHADER_BYTECODEで取得する
+		 *******************************************************************/
+		ATL_SHADER_BYTECODE GetShaderByteCode() { return ATL_SHADER_BYTECODE{ m_Buffer, m_Size }; }
+	};
 
 	/****************************************************************//**
-	 * デストラクタ
+	 * @brief AstralLayerで使えるスマートポインタ
 	 *******************************************************************/
-	~ATLSShaderBinary();
+	template<class ATLClass>
+	class ATLS_Ptr
+	{
+	private:
+		ATLClass* m_pATL = nullptr;//クラス
+		int* m_pCounter = nullptr;//カウンター
 
-	/****************************************************************//**
-	 * シェーダーバイナリデータ読み込み関数
-	 * 
-	 * \param [in] FilePath	バイナリファイルまでのパス(ファイル名混み)
-	 * \return				結果の正負
-	 *******************************************************************/
-	bool LoadShaderBinary(const char* FilePath);
+	public:
+		ATLS_Ptr() {}
+		ATLS_Ptr(decltype(nullptr)) {}
+		ATLS_Ptr(const ATLS_Ptr& atls)
+		{
+			copy(atls);
+		}
 
-	/****************************************************************//**
-	 * バッファー削除関数
-	 *******************************************************************/
-	void DeleteBuffer();
+		ATLS_Ptr(ATLClass* atl)
+		{
+			reset(atl);
+		}
 
-	/****************************************************************//**
-	 * バッファーサイズ取得関数
-	 * \return バッファーサイズ
-	 *******************************************************************/
-	unsigned long GetSize()const { return m_Size; }
+		virtual ~ATLS_Ptr()
+		{
+			release();
+		}
 
-	/****************************************************************//**
-	 * バッファー取得関数
-	 * \return バッファの先頭ポインタ
-	 *******************************************************************/
-	unsigned char* GetBuffer()const { return m_Buffer; }
+		/****************************************************************//**
+		 * 解放
+		 *******************************************************************/
+		int release()
+		{
+			if (m_pCounter != nullptr)
+			{
+				(*m_pCounter)--;
 
-	/****************************************************************//**
-	 * ATL_SHADER_BYTECODEで取得
-	 * \return ATL_SHADER_BYTECODEで取得する
-	 *******************************************************************/
-	ATL_SHADER_BYTECODE GetShaderByteCode() { return ATL_SHADER_BYTECODE { m_Buffer, m_Size }; }
-};
+				if ((*m_pCounter) <= 0)//カウンターが0以下の場合
+				{
+					delete m_pCounter;
+					m_pCounter = nullptr;
+
+					if (m_pATL != nullptr)
+						m_pATL->Release();
+					m_pATL = nullptr;
+
+					return 0;
+				}
+
+				return (*m_pCounter);
+			}
+
+			return 0;
+		}
+
+		/****************************************************************//**
+		 * 指定されたクラスをセットする
+		 * 中身がすでにある場合Releaseしてから入れる
+		 *******************************************************************/
+		void reset(ATLClass* atl)
+		{
+			release();
+
+			m_pATL = atl;
+			m_pCounter = new int;
+			(*m_pCounter) = 0;
+
+			(*m_pCounter)++;
+		}
+		void reset()
+		{
+			release();
+		}
+
+		/****************************************************************//**
+		 * データをコピーして参照カウンタインクリメント
+		 *******************************************************************/
+		void copy(const ATLS_Ptr& atls)
+		{
+			release();
+
+			m_pATL = atls.m_pATL;
+			m_pCounter = atls.m_pCounter;
+
+			(*m_pCounter)++;
+		}
+
+		/****************************************************************//**
+		 * データが入っているかチェック
+		 *******************************************************************/
+		bool empty()noexcept { return m_pATL == nullptr; }
+
+		/****************************************************************//**
+		 * データを交換する
+		 * カウンターは増えない
+		 *******************************************************************/
+		void swap(ATLS_Ptr& atls)
+		{
+			ATLClass* atlswap = m_pATL;
+			int* counterswap = m_pCounter;
+
+			m_pATL = atls.m_pATL;
+			m_pCounter = atls.m_pCounter;
+
+			atls.m_pATL = atlswap;
+			atls.m_pCounter = counterswap;
+		}
+
+		/****************************************************************//**
+		 * 引数のデータを自分に渡す(所有権を受け取る)
+		 * 自分がすでに持っていた場合はReleaseされる
+		 * カウンターは増えない
+		 *******************************************************************/
+		void move(ATLS_Ptr& atls)
+		{
+			release();
+
+			m_pATL = atls.m_pATL;
+			m_pCounter = atls.m_pCounter;
+
+			atls.release();
+		}
+
+		/****************************************************************//**
+		 * ポインタを受け取る
+		 *******************************************************************/
+		ATLClass* get() const { return m_pATL; }
+		ATLClass** get_doubleptr() { return &m_pATL; }
+
+		/********************************************************************
+		 * 演算子のオーバーロード関係
+		 *******************************************************************/
+		ATLClass* operator&() const { return m_pATL; }
+		ATLClass* operator->() const { return m_pATL; }
+		operator bool() const noexcept { return empty(); }
+		bool operator!() const { return !static_cast<bool>(this); }
+
+		ATLS_Ptr& operator= (ATLClass* atl) { reset(atl); return *this; }
+		ATLS_Ptr& operator= (decltype(nullptr)) { release(); return *this; }
+		ATLS_Ptr& operator= (const ATLS_Ptr& atls) { copy(atls); return *this; }
+
+		bool operator==(ATLS_Ptr* atls)const		{ return this->m_pATL == atls->m_pATL; }
+		bool operator==(ATLS_Ptr& atls)const		{ return this->m_pATL == atls.m_pATL; }
+		bool operator==(ATLS_Ptr atls)const			{ return this->m_pATL == atls.m_pATL; }
+		bool operator==(decltype(nullptr) atl)const { return this->m_pATL == nullptr; }
+
+		bool operator!=(ATLS_Ptr* atls)const		{ return this->m_pATL != atls->m_pATL; }
+		bool operator!=(ATLS_Ptr& atls)const		{ return this->m_pATL != atls.m_pATL; }
+		bool operator!=(ATLS_Ptr atls)const			{ return this->m_pATL != atls.m_pATL; }
+		bool operator!=(decltype(nullptr) atl)const { return this->m_pATL != nullptr; }
+	};
+}
 
 /****************************************************************//**
  * @brief 定数バッファーのリソースデスク作成関数

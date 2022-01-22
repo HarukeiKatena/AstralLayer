@@ -36,6 +36,7 @@ void AstralLayerDirectX11::DX11Fence::WaitDrawDone(AstralLayer::ATLICommandQueue
 	{
 		m_pFence->SetEventOnCompletion(fvalue, m_fenceEvent);
 		WaitForSingleObject(m_fenceEvent, INFINITE);//‘Ò‚Â
+		CloseHandle(m_fenceEvent);
 	}
 }
 
